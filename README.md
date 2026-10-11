@@ -469,6 +469,38 @@ After enabling these permissions:
 3. Try Live Chat again.
 4. Test the microphone/voice input.
 
+## 📱 Oasis AI Workspace for Android
+
+Oasis AI Workspace is available for Android as an APK download.
+
+### Download
+
+**[⬇️ Download the latest Android APK from Releases](../../releases/latest)**
+
+1. Open the Releases page.
+2. Download the `.apk` file attached to the latest release.
+3. Open the downloaded file on your Android device.
+4. If prompted, allow your browser or file manager to install unknown apps.
+5. Follow the installation prompts to install Oasis.
+
+### Installation Notes
+
+- Android may display a security warning when installing an APK downloaded outside Google Play.
+- Only install APKs from a source you trust.
+- If Android reports that the app cannot be installed, check your Android version and whether an existing installation conflicts with the downloaded package.
+
+### About the Android Version
+
+The Android app packages the Oasis web interface in a native Android application using Capacitor.
+
+Oasis is an ongoing project. Features and compatibility may differ between the Android and desktop versions.
+
+**Project:** Oasis AI Workspace  
+**Platform:** Android  
+**Package format:** APK
+
+For bug reports, installation issues, or feature requests, please open an issue in this repository.
+
 ### ⚠️ Important
 
 Because Oasis runs as a Windows desktop application, **"Let desktop apps access your microphone" is especially important**.
