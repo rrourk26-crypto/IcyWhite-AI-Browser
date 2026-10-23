@@ -1,0 +1,7 @@
+/* Settings search box */
+#setSearchRow { position: relative; display: flex; align-items: center; }
+#setSearch { width: 100%; padding: 8px 12px 8px 34px; border-radius: 999px; font-size: 13.5px; }
+#setSearchRow svg { position: absolute; left: 12px; width: 15px; height: 15px; fill: none; stroke: var(--faint); stroke-width: 2; stroke-linecap: round; pointer-events: none; }
+#settings .s-hide { display: none !important; }
+#setSearchEmpty { color: var(--muted); font-size: 13px; padding: 6px 4px; }
+#settings.searching #setTabs [data-go] { opacity: .55; }

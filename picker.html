@@ -4,6 +4,24 @@
 <title>Share your screen</title>
 <style>
   *{box-sizing:border-box}
+  body{margin:0;font:14px "Segoe UI",system-ui,sans-serif;background:#e4e9f3;color:#0a1322;display:flex;flex-direction:column;height:100vh}
+  header{padding:16px 20px 8px}
+  h1{margin:0 0 4px;font-size:18px}
+  p{margin:0;color:#44556c;font-size:13px}
+  #grid{flex:1;overflow:auto;padding:12px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;align-content:start}
+  h2{grid-column:1/-1;margin:8px 0 0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#44556c}
+  button.card{background:#d6dce9;border:2px solid #b9c3d8;border-radius:10px;padding:8px;color:inherit;cursor:pointer;text-align:left;font:inherit}
+  button.card:hover{border-color:#5b8cff}
+  button.card.sel{border-color:#5b8cff;background:#c2cbe2}
+  button.card img{width:100%;aspect-ratio:16/10;object-fit:contain;background:#f1f3f9;border-radius:6px;display:block}
+  button.card span{display:block;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+  footer{padding:12px 20px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid #b9c3d8}
+  footer button{font:inherit;padding:8px 18px;border-radius:8px;border:1px solid #a6b2cd;background:#c8cfe4;color:#0a1322;cursor:pointer}
+  footer button.go{background:#3b6cf0;border-color:#3b6cf0;color:#fff}
+  footer button:disabled{opacity:.45;cursor:default}
+  #empty{grid-column:1/-1;color:#5d0808}
+  @media (prefers-color-scheme: dark){
+  *{box-sizing:border-box}
   body{margin:0;font:14px "Segoe UI",system-ui,sans-serif;background:#0b101c;color:#dbe6f7;display:flex;flex-direction:column;height:100vh}
   header{padding:16px 20px 8px}
   h1{margin:0 0 4px;font-size:18px}
@@ -20,11 +38,12 @@
   footer button.go{background:#3b6cf0;border-color:#3b6cf0;color:#fff}
   footer button:disabled{opacity:.45;cursor:default}
   #empty{grid-column:1/-1;color:#ff9a9a}
+}
 </style></head>
 <body>
-<header><h1>Choose what to share with the AI</h1><p>The AI only sees the picture you pick, and only when you send a message.</p></header>
-<div id="grid"><div id="empty" style="color:#8fa3bf">Loading screens and windows…</div></div>
-<footer><button id="cancel" type="button">Cancel</button><button id="share" class="go" type="button" disabled>Share</button></footer>
+<header><h1>Choose what to share with the AI</h1><p>The AI only sees the picture you pick, and only when you send a message. Pick one of your IcyWhite tabs, any screen, or any window, including other browsers and YouTube. If a preview looks black, share the whole screen instead.</p></header>
+<div id="grid"><div id="empty" style="color:#44556c">Loading screens and windows…</div></div>
+<footer><button id="refresh" type="button" style="margin-right:auto" title="Look for screens and windows again (open the window you want to share first)">Refresh list</button><button id="cancel" type="button">Cancel</button><button id="share" class="go" type="button" disabled>Share</button></footer>
 <script>
   let picked = null;
   const grid = document.getElementById("grid"), share = document.getElementById("share");
@@ -39,12 +58,14 @@
   }
   window.oasisPicker.onSources((list) => {
     grid.textContent = "";
-    const screens = list.filter(s => s.screen), wins = list.filter(s => !s.screen);
-    if (!list.length) { const e = document.createElement("div"); e.id = "empty"; e.textContent = "No screens or windows were found. On a Mac, allow Screen Recording for this app in System Settings > Privacy & Security."; grid.append(e); return; }
+    const tabs = list.filter(s => s.tab), screens = list.filter(s => s.screen), wins = list.filter(s => !s.screen && !s.tab);
+    if (!list.length) { const e = document.createElement("div"); e.id = "empty"; e.textContent = "No tabs, screens or windows were found. On a Mac, allow Screen Recording for this app in System Settings > Privacy & Security."; grid.append(e); return; }
+    if (tabs.length) { const h = document.createElement("h2"); h.textContent = "Tabs in IcyWhite"; grid.append(h); tabs.forEach(s => grid.append(card(s))); }
     if (screens.length) { const h = document.createElement("h2"); h.textContent = "Screens"; grid.append(h); screens.forEach(s => grid.append(card(s))); }
     if (wins.length) { const h = document.createElement("h2"); h.textContent = "Windows"; grid.append(h); wins.forEach(s => grid.append(card(s))); }
   });
   share.onclick = () => picked && window.oasisPicker.choose(picked);
+  document.getElementById("refresh").onclick = () => { picked = null; share.disabled = true; window.oasisPicker.refresh(); };
   document.getElementById("cancel").onclick = () => window.oasisPicker.cancel();
   addEventListener("keydown", e => { if (e.key === "Escape") window.oasisPicker.cancel(); });
 </script></body></html>

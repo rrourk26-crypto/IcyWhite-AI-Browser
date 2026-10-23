@@ -1,0 +1,75 @@
+/* Settings > Local model: modern controls (switches, segmented pickers, sliders, Apply bar). Light and dark theme. */
+#llamaBlock { --mline: color-mix(in srgb, var(--faint) 30%, transparent); --mfill: color-mix(in srgb, var(--faint) 14%, transparent); }
+#llamaBlock .m-hide { position: absolute !important; width: 1px; height: 1px; opacity: 0; pointer-events: none; overflow: hidden; }
+
+/* cards for the sections */
+#llamaBlock details.lset { border-radius: 14px; background: var(--mfill); border-color: var(--mline); }
+#llamaBlock details.lset > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; }
+#llamaBlock details.lset > summary::-webkit-details-marker { display: none; }
+#llamaBlock details.lset > summary::after { content: ""; width: 7px; height: 7px; border-right: 2px solid var(--faint); border-bottom: 2px solid var(--faint); transform: rotate(45deg); transition: transform .15s; margin-right: 4px; }
+#llamaBlock details.lset[open] > summary::after { transform: rotate(-135deg); }
+#llamaBlock .lgrid { grid-template-columns: 1fr; gap: 6px 0; }
+#llamaBlock .lfield { padding: 10px 0; border-bottom: 1px solid color-mix(in srgb, var(--faint) 16%, transparent); }
+#llamaBlock .lfield:last-child { border-bottom: 0; }
+#llamaBlock .lfield small, #llamaBlock .lfield.m-sw small { display: block; color: var(--faint); }
+
+/* switch rows */
+#llamaBlock label.m-sw { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 14px; row-gap: 3px; }
+#llamaBlock label.m-sw > small { grid-column: 1 / -1; }
+#llamaBlock .m-side { display: inline-flex; align-items: center; gap: 8px; order: 2; }
+#llamaBlock .msw { position: relative; width: 42px; height: 24px; flex: none; border-radius: 999px; background: color-mix(in srgb, var(--faint) 45%, transparent); transition: background .18s; padding: 0; }
+#llamaBlock .msw i { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.35); transition: transform .18s; }
+#llamaBlock .msw[data-state="on"] { background: var(--accent); }
+#llamaBlock .msw[data-state="on"] i { transform: translateX(18px); }
+#llamaBlock .msw[data-state="default"] { background: transparent; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--faint) 55%, transparent); }
+#llamaBlock .msw[data-state="default"] i { transform: translateX(9px); background: var(--faint); box-shadow: none; }
+#llamaBlock .mreset { font-size: 11.5px; padding: 2px 9px; border-radius: 999px; color: var(--muted); background: var(--mfill); }
+#llamaBlock .mreset:hover { color: var(--text); }
+#llamaBlock .mreset[hidden] { display: none; }
+
+/* the auto-start checkbox as a switch */
+#llamaBlock label.m-chk { padding: 10px 12px; border-radius: 12px; background: var(--mfill); border: 1px solid var(--mline); color: var(--text); font-size: 13.5px; }
+#llamaBlock label.m-chk input.vchk { appearance: none; -webkit-appearance: none; order: 2; width: 42px; height: 24px; border-radius: 999px; position: relative; cursor: pointer; background: color-mix(in srgb, var(--faint) 45%, transparent); border: 0; transition: background .18s; margin: 0; }
+#llamaBlock label.m-chk input.vchk::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.35); transition: transform .18s; }
+#llamaBlock label.m-chk input.vchk:checked { background: var(--accent); }
+#llamaBlock label.m-chk input.vchk:checked::after { transform: translateX(18px); }
+
+/* segmented picker */
+#llamaBlock .mseg { display: flex; gap: 3px; padding: 3px; border-radius: 12px; background: var(--mfill); border: 1px solid var(--mline); }
+#llamaBlock .mseg button { flex: 1 1 0; min-width: 0; padding: 6px 8px; border-radius: 9px; font-size: 12.5px; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background .15s, color .15s; }
+#llamaBlock .mseg button:hover { color: var(--text); }
+#llamaBlock .mseg button.on { background: var(--accent); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+
+/* sliders */
+#llamaBlock .mslider { display: flex; align-items: center; gap: 10px; }
+#llamaBlock .mslider .mnum { width: 104px; flex: none; text-align: center; padding: 6px 8px; border-radius: 10px; }
+#llamaBlock .mrange { -webkit-appearance: none; appearance: none; flex: 1; min-width: 0; height: 6px; border-radius: 999px; padding: 0; border: 0; cursor: pointer;
+  background: linear-gradient(to right, var(--accent) var(--p, 0%), color-mix(in srgb, var(--faint) 35%, transparent) var(--p, 0%)); }
+#llamaBlock .mrange::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 2px solid var(--accent); box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+#llamaBlock .mslider.is-default .mrange { opacity: .55; }
+#llamaBlock .mslider.is-default .mrange::-webkit-slider-thumb { border-color: var(--faint); }
+#llamaBlock .mticks { display: flex; justify-content: space-between; margin: 2px 114px 0 4px; font-size: 10.5px; color: var(--faint); }
+#llamaBlock .mticks span.on { color: var(--accent); font-weight: 700; }
+#llamaBlock .media-api-grid { grid-template-columns: 1fr; }
+#llamaBlock .mslider .mreset { flex: none; }
+
+/* model / runtime pickers and buttons */
+#llamaBlock select { border-radius: 12px; padding: 9px 12px; }
+#llamaBlock .dlg-actions button { border-radius: 999px; padding: 8px 15px; }
+
+/* sticky Apply changes bar */
+#llamaPending { display: none !important; }
+#llamaApplyBar { position: sticky; bottom: 0; z-index: 5; display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin-top: 4px; border-radius: 14px; border: 1px solid var(--mline); background: var(--composer, var(--mfill)); backdrop-filter: blur(10px); box-shadow: 0 -6px 18px rgba(0,0,0,.12); }
+#llamaApplyBar .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ok); flex: none; }
+#llamaApplyBar[data-state="dirty"] .dot { background: #f59e0b; box-shadow: 0 0 0 4px rgba(245,158,11,.22); }
+#llamaApplyBar[data-state="loading"] .dot { background: var(--accent); animation: llApplyPulse 1s infinite ease-in-out; }
+#llamaApplyMsg { flex: 1; min-width: 0; font-size: 12.5px; color: var(--muted); }
+#llamaApply { padding: 8px 18px; border-radius: 999px; font-weight: 700; white-space: nowrap; }
+#llamaApply:disabled { opacity: .45; cursor: default; }
+@keyframes llApplyPulse { 50% { opacity: .35; } }
+
+/* memory fit line */
+#llamaFit { padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, var(--ok) 14%, transparent); border: 1px solid color-mix(in srgb, var(--ok) 35%, transparent); color: var(--text); line-height: 1.45; }
+#llamaFit[data-level="tight"] { background: rgba(245,158,11,.14); border-color: rgba(245,158,11,.5); }
+#llamaFit[data-level="too_big"] { background: color-mix(in srgb, var(--bad) 13%, transparent); border-color: color-mix(in srgb, var(--bad) 50%, transparent); }
+#llamaFit[data-level="unknown"] { background: var(--mfill); border-color: var(--mline); }

@@ -1,0 +1,15 @@
+/* Settings > General > Look: theme colors */
+#themeColors { gap: 8px; }
+#themeColors .tc-head { display: flex; flex-direction: column; gap: 2px; }
+#themeColors .tc-head b { font-size: 14px; }
+.tc-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.tc-presets button { padding: 5px 11px 5px 8px; border-radius: 999px; font-size: 12.5px; font-weight: 600; background: rgba(127,150,180,.14); display: inline-flex; align-items: center; gap: 6px; }
+.tc-presets button::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--sw); border: 1px solid rgba(127,127,127,.5); }
+.tc-presets button:hover { background: rgba(127,150,180,.28); }
+.tc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+.tc-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); min-width: 0; }
+.tc-row span { flex: 1; min-width: 0; }
+.tc-row input[type="color"] { width: 40px; height: 28px; padding: 0 !important; border-radius: 8px !important; border: 1.5px solid rgba(127,127,127,.6) !important; background: none !important; cursor: pointer; flex: none; }
+.tc-row button { width: 24px; height: 24px; border-radius: 50%; font-size: 14px; line-height: 1; color: var(--muted); opacity: .35; flex: none; }
+.tc-row.custom button { opacity: 1; }
+.tc-row button:hover { background: rgba(127,150,180,.25); }

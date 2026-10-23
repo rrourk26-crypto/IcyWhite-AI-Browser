@@ -1,0 +1,22 @@
+/* Settings > Local model: the server / network / performance sections (works in the light and dark theme). */
+#llamaBlock details.lset { border: 1px solid color-mix(in srgb, var(--faint) 35%, transparent); border-radius: 12px; padding: 0 12px; }
+#llamaBlock details.lset > summary { cursor: pointer; font-weight: 600; font-size: 13.5px; padding: 9px 0; }
+#llamaBlock details.lset[open] > summary { border-bottom: 1px solid color-mix(in srgb, var(--faint) 25%, transparent); margin-bottom: 8px; }
+#llamaBlock .lgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; padding: 2px 0 12px; }
+#llamaBlock .lopts { display: contents; }
+#llamaBlock .lgrid > small, #llamaBlock .lgrid > pre, #llamaBlock .lgrid > .dlg-actions, #llamaBlock .lgrid > .lfield.wide { grid-column: 1 / -1; }
+#llamaBlock .lfield { display: flex; flex-direction: column; gap: 4px; min-width: 0; font-size: 13px; }
+#llamaBlock .lfield input, #llamaBlock .lfield select { width: 100%; min-width: 0; box-sizing: border-box; }
+#llamaBlock .lfield small { display: none; font-size: 11.5px; }
+#llamaBlock .lfield:focus-within small { display: block; }
+#llamaBlock .lfield.always small { display: block; }
+#llamaBlock .lfield .model-settings-row button { padding: 7px 11px; border-radius: 10px; background: rgba(127,140,160,.18); font-weight: 600; font-size: 12.5px; white-space: nowrap; }
+#llamaBlock #llamaCmd { font: 11.5px/1.45 Consolas, monospace; white-space: pre-wrap; word-break: break-all; margin: 0; max-height: 150px; overflow: auto; user-select: text; }
+#llamaBlock #llamaNetInfo { grid-column: 1 / -1; color: var(--muted); }
+#llamaAddr { display: flex; flex-direction: column; gap: 5px; padding: 8px 10px; border-radius: 12px; background: color-mix(in srgb, var(--faint) 14%, transparent); font-size: 12.5px; }
+#llamaAddr .arow { display: flex; align-items: center; gap: 8px; min-width: 0; }
+#llamaAddr .arow b { flex: none; font-weight: 600; }
+#llamaAddr .arow code { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; user-select: all; }
+#llamaAddr .arow button { padding: 3px 10px; border-radius: 8px; background: rgba(127,140,160,.22); font-size: 12px; font-weight: 600; }
+#llamaPending { color: var(--bad); }
+@media (max-width: 640px) { #llamaBlock .lgrid { grid-template-columns: 1fr; } }

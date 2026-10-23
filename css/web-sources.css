@@ -1,0 +1,16 @@
+/* Web sources card under a reply */
+.web-box { border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.web-box > summary { font-weight: 600; }
+.web-note { margin: 6px 0; font-size: 12px; color: var(--muted); line-height: 1.45; }
+.web-src { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-top: 1px solid color-mix(in srgb, var(--faint) 24%, transparent); }
+.web-src.cited .web-head b { color: var(--accent); }
+.web-head a { color: var(--accent); text-decoration: none; font-weight: 600; overflow-wrap: anywhere; }
+.web-head a:hover { text-decoration: underline; }
+.web-meta { color: var(--faint); font-size: 11.5px; overflow-wrap: anywhere; }
+.web-check { font-size: 11.5px; color: var(--muted); }
+.web-check.good { color: var(--ok); }
+.web-check.weak { color: #b7791f; }
+.web-check.bad { color: var(--bad); font-weight: 600; }
+.web-warns { margin-top: 8px; padding: 8px 10px; border-radius: 10px; background: color-mix(in srgb, var(--bad) 10%, transparent); font-size: 12px; }
+.web-warns p { margin: 4px 0 0; line-height: 1.4; }
+.web-warn { margin: 8px 0 0; font-size: 12px; color: #b7791f; }

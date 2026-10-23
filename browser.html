@@ -3,111 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Oasis AI Workspace</title>
-<style>
-:root{color-scheme:dark;--bg:#090c12;--bar:#111722;--bar2:#171f2d;--line:#2b3444;--text:#eef3fa;--muted:#9aa8bb;--accent:#78b8ff;--ai:#18283c}
-*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:13px "Segoe UI",system-ui,sans-serif}
-body{display:flex;flex-direction:column}
-#chrome{background:linear-gradient(#151c28,#101620);border-bottom:1px solid #05070a}
-body.private #chrome{background:linear-gradient(#1c1229,#140c1e)}
-body.private #address{border-color:#5c3f80}
-#privateBadge{font-size:11px;color:#d9bdf7;background:#2c1c40;padding:5px 10px;border-radius:12px;margin-right:2px;white-space:nowrap;flex:none}
-#tabbar{height:40px;display:flex;align-items:flex-end;padding:5px 8px 0;gap:3px;overflow:hidden}
-#tabs{height:35px;display:flex;align-items:stretch;gap:3px;min-width:0;align-items:flex-end;padding:5px 8px 0;gap:3px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
-#tabs::-webkit-scrollbar{display:none}
-.tab{height:35px;flex:0 1 200px;min-width:64px;max-width:240px;display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid transparent;border-radius:10px 10px 0 0;background:#101620;color:#aeb9c8;cursor:pointer;user-select:none}
-.tab.active{flex-shrink:0;min-width:120px;background:#1a2230;color:#fff;border-color:#2b3444;border-bottom-color:#1a2230}
-.tab.grouped{border-top:3px solid var(--gcolor,#5aa8e0)}
-.tab.dragging{opacity:.35}
-.tab.dropBefore{box-shadow:inset 4px 0 0 var(--accent)}
-.tab.dropAfter{box-shadow:inset -4px 0 0 var(--accent)}
-.tab.dropGroup,.groupChip.dropGroup{outline:2px dashed var(--accent);outline-offset:-3px}
-.tab.dropGroup{background:#1f2b3d}
-.groupRename{height:26px;align-self:flex-end;margin:0 2px;width:110px;border:1px solid #5d91cc;border-radius:6px 6px 0 0;background:#0b111a;color:#fff;padding:0 7px;outline:0;font:inherit;font-size:11.5px;flex:none}
-.tab .favicon{width:16px;height:16px;border-radius:4px;background:#5b8cff;display:grid;place-items:center;font-size:10px;flex:none}
-.tab .title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.tab .close{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#8794a8}
-.tab .close:hover{background:#2c3545;color:white}
-.groupChip{height:26px;align-self:flex-end;margin:0 2px;padding:0 9px;border-radius:6px 6px 0 0;color:#0a0e14;font-size:11px;font-weight:700;white-space:nowrap;flex:none;opacity:.95}
-.groupChip:hover{opacity:1}
-#newtab{height:30px;width:32px;margin:0 0 0 2px;border-radius:7px;display:grid;place-items:center;font-size:21px;color:#c7d1df;flex:none}
-#newtab:hover{background:#252e3d}
-#toolbar{height:48px;display:flex;align-items:center;gap:7px;padding:5px 10px;width:100%}
-.navbtn{width:34px;height:34px;border-radius:8px;color:#b8c3d2;font-size:18px}
-.navbtn:hover{background:#252e3d}.navbtn:disabled{opacity:.35}
-#urlForm{display:flex;flex:1;min-width:0;margin:0}
-#address{height:36px;flex:1;min-width:0;border:1px solid #3a4658;border-radius:18px;background:#0b1018;color:#edf3fb;padding:0 16px;outline:0;font-size:14px}
-#address:focus{border-color:#5d91cc;background:#0d131d}
-.dropdownWrap{position:relative;display:flex;align-items:center}
-#favStar.active{color:#ffd76b}
-.dropdown{position:absolute;top:42px;right:0;width:335px;max-height:min(640px,calc(100vh - 56px));overflow:auto;background:#141c29;border:1px solid #2b3444;border-radius:10px;box-shadow:0 16px 40px #0009;padding:6px;display:none;z-index:80}
-.dropdown.open{display:block}
-.ddItem{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;color:#dbe4f0;font-size:13px}
-.ddItem:hover{background:#1e2a3c}
-button.ddItem{width:100%;text-align:left;background:none;border:0;cursor:pointer;font:inherit}
-.ddTitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;cursor:pointer}
-.ddShortcut{color:#77869c;font-size:11.5px;flex:none;margin-left:auto}
-.ddArrow{color:#77869c;font-size:13px;flex:none;margin-left:auto}
-.ddItem .ddShortcut+.ddArrow{margin-left:8px}
-.ddRow{cursor:pointer}
-.ddRowText{display:flex;flex-direction:column;overflow:hidden;flex:1;min-width:0}
-.ddRowText .ddTitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:default}
-.ddSub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#77869c;font-size:11px}
-.ddRemove{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#8794a8;flex:none;font-size:13px;background:none;border:0}
-.ddRemove:hover{background:#2c3545;color:#fff}
-.ddEmpty{padding:16px 10px;color:#8d9bb0;font-size:12.5px;text-align:center}
-.ddSep{height:1px;background:#293445;margin:6px 4px}
-.ddHead{padding:6px 10px 4px;color:#77869c;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
-.ddPanelHead{display:flex;align-items:center;gap:8px;padding:4px 4px 8px;margin-bottom:4px;border-bottom:1px solid #293445}
-.ddBack{width:28px;height:28px;border-radius:7px;color:#c7d1df;font-size:17px;flex:none;background:none;border:0;cursor:pointer}
-.ddBack:hover{background:#252e3d}
-.ddPanelTitle{font-weight:700;font-size:13.5px;color:#eef3fa}
-.ddColorDot{width:9px;height:9px;border-radius:50%;flex:none}
-.ddZoomRow{display:flex;align-items:center;gap:4px;padding:4px 6px}
-.ddZoomBtn{width:30px;height:30px;border-radius:7px;color:#dbe4f0;font-size:16px;background:none;border:0;cursor:pointer}
-.ddZoomBtn:hover{background:#1e2a3c}
-.ddZoomPct{flex:1;text-align:center;color:#c7d1df;font-size:12.5px}
-.ddFooterBtn{width:100%;margin-top:4px;padding:9px 10px;border-radius:7px;background:#1c2635;color:#dbe4f0;border:1px solid #2b3444;cursor:pointer;font:inherit;font-size:12.5px}
-.ddFooterBtn:hover{background:#232f42}
-.ddFooterBtn.ddPrimary{background:#3f6fae;border-color:#3f6fae;color:#fff}
-.ddFooterBtn.ddPrimary:hover{background:#4a7dbf}
-.ddFooterBtn.ddDanger{background:#5a2a2a;border-color:#5a2a2a;color:#fbdcdc}
-.ddFooterBtn.ddDanger:hover{background:#6c3232}
-.ddSettingsForm,.ddClearForm,.ddGroupForm{padding:6px 4px;display:flex;flex-direction:column;gap:6px}
-.ddLabel{color:#8d9bb0;font-size:11.5px;margin-top:4px}
-.ddInput{height:32px;border-radius:7px;border:1px solid #334156;background:#0b111a;color:#fff;padding:0 10px;outline:0;font:inherit}
-.ddInput:focus{border-color:#5d91cc}
-.ddCheck{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#dbe4f0;padding:4px 2px}
-.ddClearNote{color:#77869c;font-size:11px;padding:2px 2px 0}
-.ddColorRow{display:flex;gap:6px;padding:2px 0}
-.ddSwatch{width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer}
-.ddSwatch.active{border-color:#fff}
-.ddGroupBtns{display:flex;gap:6px}
-.ddGroupBtns .ddFooterBtn{margin-top:0}
-#findBar{position:absolute;z-index:70;top:12px;left:12px;display:none;align-items:center;gap:6px;background:#141c29;border:1px solid #2b3444;border-radius:10px;box-shadow:0 12px 30px #0009;padding:6px 8px}
-#findBar.open{display:flex}
-#findInput{width:180px;height:30px;border:1px solid #334156;border-radius:7px;background:#0b111a;color:#fff;padding:0 10px;outline:0}
-#findCount{font-size:12px;color:#8d9bb0;min-width:44px;text-align:center}
-#findBar button{width:28px;height:28px;border-radius:7px;color:#c7d1df}
-#findBar button:hover{background:#252e3d}
-#content{position:relative;flex:1;min-height:0;background:#fff}
-view{display:none}webview{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
-webview.active{display:flex}
-#aiPanel{position:absolute;z-index:50;right:12px;top:12px;width:370px;height:calc(100% - 24px);display:none;flex-direction:column;background:rgba(12,18,28,.97);border:1px solid #34445a;border-radius:14px;box-shadow:0 18px 55px #0009;overflow:hidden}
-#aiPanel.open{display:flex}
-#aiHead{height:48px;display:flex;align-items:center;padding:0 14px;border-bottom:1px solid #293445;font-weight:700}
-#aiHead span{flex:1}#aiClose{font-size:20px;color:#9eacbf}
-#aiMessages{flex:1;overflow:auto;padding:12px}
-.msg{margin:8px 0;padding:9px 11px;border-radius:10px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
-.msg.user{background:#243b59;margin-left:35px}.msg.ai{background:#151f2d;margin-right:15px}
-#aiTools{display:flex;gap:6px;padding:8px 10px;border-top:1px solid #293445}
-.tool{flex:1;padding:7px;border:1px solid #334156;border-radius:8px;background:#111925;color:#cbd6e5}
-.tool:hover{background:#1b2737}
-#aiForm{display:flex;gap:7px;padding:10px;border-top:1px solid #293445}
-#aiInput{flex:1;min-width:0;resize:none;height:42px;border:1px solid #334156;border-radius:9px;background:#0b111a;color:white;padding:10px;outline:0}
-#aiSend{width:48px;border-radius:9px;background:#6eaef5;color:#08111e;font-weight:700}
-#status{font-size:11px;color:#8d9bb0;padding:0 12px 7px}
-</style>
+<title>IcyWhite</title>
+<script>(function(){var t="light";try{t=localStorage.getItem("icywhite.theme")||"light"}catch(e){}
+var d=t==="dark"||(t==="system"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches);
+document.documentElement.setAttribute("data-theme",d?"dark":"light");
+document.write('<link id="themeCss" rel="stylesheet" href="css/shell'+(d?'-dark':'-light')+'.css">');})();</script>
+<link rel="stylesheet" href="css/passwords.css">
+<script src="tab-click.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/theme-colors.js"></script>
+<script src="js/builtin-apps.js"></script>
 </head>
 <body>
 <div id="chrome">
@@ -118,12 +23,14 @@ webview.active{display:flex}
     <button class="navbtn" id="reload" title="Reload">↻</button>
     <button class="navbtn" id="home" title="Home">⌂</button>
     <form id="urlForm"><input id="address" autocomplete="off" spellcheck="false" placeholder="Search or enter a URL"></form>
+    <button class="navbtn" id="pwBtn" title="Passwords (Ctrl+Shift+K)" aria-label="Passwords"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12.5 20 4M16 8l3 3M14 10l2 2"/></svg></button>
     <button class="navbtn" id="favStar" title="Add to favorites">☆</button>
     <div class="dropdownWrap" id="toolsWrap">
       <button class="navbtn" id="toolsBtn" title="Tools">⋮</button>
       <div class="dropdown" id="toolsMenu"></div>
     </div>
   </div>
+  <div id="pwBar" role="status"></div>
 </div>
 <div id="content">
   <div id="findBar">
@@ -134,7 +41,7 @@ webview.active{display:flex}
     <button id="findClose" title="Close">×</button>
   </div>
   <div id="aiPanel">
-    <div id="aiHead"><span>Oasis AI Workspace</span><button id="aiClose">×</button></div>
+    <div id="aiHead"><span>IcyWhite</span><button id="aiClose">×</button></div>
     <div id="aiMessages"><div class="msg ai">I can search, inspect the current page, read visible page text, and use browser actions. Tell me what you want done.</div></div>
     <div id="aiTools">
       <button class="tool" id="aiScreen">See screen</button>
@@ -151,13 +58,16 @@ const PARTITION = urlParams.get("partition") || "persist:oasis";
 const IS_PRIVATE = urlParams.get("private") === "1";
 if (IS_PRIVATE) {
   document.body.classList.add("private");
-  document.title = "Oasis — InPrivate";
+  document.title = "IcyWhite — InPrivate";
 }
 
 const HOME_FILE = "index.html";
 const MEDIA_FILE = "tv.html";
 const NEW_TAB_URL = "https://www.google.com/";
 const DEFAULT_LM_URL = "http://50.5.155.226:1234/v1";
+// The Home page (a different storage area) tells the shell which server to use through a shared preference.
+let LM_PREF = null;
+try { window.oasisElectron.getPref("lm_url").then((v) => { if (v) LM_PREF = v; }); window.oasisElectron.onPref((k, v) => { if (k === "lm_url") LM_PREF = v; }); } catch (e) {}
 const tabs=[], views=new Map();
 let activeId=null, nextId=1, blankTabNumber=1;
 
@@ -187,6 +97,7 @@ function makeTab(url, title, displayUrl="", options={}){
   v.id="view-"+id; v.src=url;
   v.setAttribute("allowpopups","true");
   v.setAttribute("partition",PARTITION);
+  if(options.appTab) v.setAttribute("webpreferences","backgroundThrottling=no");   // the Home/chat page keeps listening and timing normally while another tab is in front
   v.style.display="none";
   $("content").prepend(v);
 
@@ -200,6 +111,7 @@ function makeTab(url, title, displayUrl="", options={}){
     }
   });
   v.addEventListener("did-navigate",()=>{
+    if(follow.on && activeId===id && id!==follow.chatId){ clearTimeout(follow.navTimer); follow.navTimer=setTimeout(()=>onTabActivated(id),600); }   // a page change can swap what is being captured
     if(!item.fixedUrl) item.displayUrl="";
     if(activeId===id)syncAddress(v,item);
     recordHistory(safeGetURL(v), tab.querySelector(".title").textContent);
@@ -208,12 +120,17 @@ function makeTab(url, title, displayUrl="", options={}){
   // The Home page asks for tabs through this bridge when the AI opens an app or
   // a search (see openTab in project-preload.js).
   v.addEventListener("ipc-message",e=>{
+    if(e.channel==="oasis-tabs"){ handleTabsRequest(item,v,e.args||[]); return; }
+    if(e.channel==="oasis-share-stopped"){ if(follow.chatId===id) follow.on=false; return; }
     if(e.channel!=="oasis-open-tab") return;
     const url=String((e.args&&e.args[0])||"");
     if(!isAllowedTabUrl(url)) return;
     const meta=appTabMeta(url);
     makeTab(url,meta.title,meta.displayUrl);
   });
+  // Password manager: login forms found in the page, "fill" clicks and submitted logins arrive on "pw-*" channels (js/passwords-ui.js)
+  v.addEventListener("ipc-message",e=>{ if(typeof pwHandleGuest==="function"&&String(e.channel).startsWith("pw-")) pwHandleGuest(item,v,e.channel,(e.args||[])[0]); });
+  v.addEventListener("did-navigate",()=>{ if(typeof pwOnNavigate==="function") pwOnNavigate(item); });
   v.addEventListener("dom-ready",()=>{
     if(activeId===id)syncAddress(v,item);
     installHomeToolbarHooks(v);
@@ -223,7 +140,8 @@ function makeTab(url, title, displayUrl="", options={}){
     // A page that can't load now says why, instead of leaving a blank tab.
     if(e.isMainFrame && e.errorCode!==-3 && !/^data:/i.test(e.validatedURL||"")){
       const esc=t=>String(t||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-      const page='<meta charset="utf-8"><body style="font:15px Segoe UI,sans-serif;background:#0b101c;color:#dbe6f7;padding:48px;line-height:1.6"><h2>This page could not be opened</h2><p>'+esc(e.validatedURL||e.url)+'</p><p style="color:#ff9a9a">'+esc(e.errorDescription||"error")+" ("+esc(e.errorCode)+")</p><p style=\"color:#8fa3bf\">If this is one of the built-in apps, the file may be missing from the app folder. Re-extract the zip fully and try again.</p>";
+      const dk=document.documentElement.getAttribute("data-theme")==="dark",pc=dk?["#0b101c","#dbe6f7","#ff9a9a","#8fa3bf"]:["#f4f6fa","#0a1322","#5d0808","#44556c"];
+      const page='<meta charset="utf-8"><body style="font:15px Segoe UI,sans-serif;background:'+pc[0]+';color:'+pc[1]+';padding:48px;line-height:1.6"><h2>This page could not be opened</h2><p>'+esc(e.validatedURL||e.url)+'</p><p style="color:'+pc[2]+'">'+esc(e.errorDescription||"error")+" ("+esc(e.errorCode)+")</p><p style=\"color:"+pc[3]+"\">If this is one of the built-in apps, the file may be missing from the app folder. Re-extract the zip fully and try again.</p>";
       try{ v.loadURL("data:text/html;charset=utf-8,"+encodeURIComponent(page)); }catch(err){}
     }
   });
@@ -279,6 +197,80 @@ function activate(id){
   const item=tabs.find(t=>t.id===id), v=views.get(id);
   if(v) syncAddress(v,item);
   try{ item?.tab.scrollIntoView({inline:"nearest",block:"nearest"}); }catch(e){}
+  onTabActivated(id);
+}
+
+/* ---- Tab sharing follows you, and the Home page can switch/close tabs for voice commands ---- */
+const follow={on:false,chatId:null,requester:null,lastOther:null,navTimer:0};
+try{ window.oasisElectron.onShareStarted(info=>{
+  const chat=tabs.find(t=>{ try{ return t.view.getWebContentsId()===info.requester; }catch(e){ return false; } });
+  follow.on=!!chat && info.kind==="tab"; follow.chatId=chat?chat.id:null; follow.requester=info.requester;
+}); }catch(e){}
+function onTabActivated(id){
+  if(id!==follow.chatId) follow.lastOther=id;
+  if(!follow.on || id===follow.chatId) return;
+  const chat=tabs.find(t=>t.id===follow.chatId), tv=views.get(id);
+  if(!chat || !tv){ if(!chat) follow.on=false; return; }
+  let wcId; try{ wcId=tv.getWebContentsId(); }catch(e){ tv.addEventListener("dom-ready",()=>{ if(activeId===id) onTabActivated(id); },{once:true}); return; }
+  window.oasisElectron.shareFollowSet({requester:follow.requester,target:wcId}).then(ok=>{ if(ok){ try{ chat.view.send("oasis-share-refollow"); }catch(e){} } }).catch(()=>{});
+}
+function isHomeView(v){ try{ return safeGetURL(v).split(/[?#]/)[0]===fileUrl("index.html"); }catch(e){ return false; } }
+function handleTabsRequest(item,v,args){
+  const reqId=args[0], req=args[1]||{};
+  const reply=r=>{ try{ v.send("oasis-tabs-result",reqId,r); }catch(e){} };
+  if(!isHomeView(v)) return reply({error:"not allowed"});
+  if(req.op==="list") return reply({tabs:tabs.map((t,i)=>({id:t.id,index:i+1,title:t.tab.querySelector(".title").textContent||"",url:safeGetURL(t.view),active:t.id===activeId,chat:t.id===item.id})),lastOther:follow.lastOther});
+  // Hands-free actions on "the tab you are looking at" (never the chat tab itself).
+  if(["new","open","reload","back","forward","scroll","text","closeothers","click","links","closecur"].includes(req.op)){
+    if(req.op==="new"){ try{ makeTab(NEW_TAB_URL); return reply({ok:true}); }catch(e){ return reply({error:"failed"}); } }
+    if(req.op==="open"){ const u=String(req.url||""); if(!/^https?:\/\//i.test(u)) return reply({error:"bad address"}); try{ makeTab(u); return reply({ok:true}); }catch(e){ return reply({error:"failed"}); } }
+    if(req.op==="closeothers"){
+      const keep=tabs.find(t=>t.id===activeId && t.id!==item.id) || tabs.find(t=>t.id===follow.lastOther && t.id!==item.id) || null;
+      const others=tabs.filter(t=>t.id!==item.id && (!keep || t.id!==keep.id));
+      if(req.dry) return reply({ok:true,n:others.length});
+      others.forEach(t=>closeTab(t.id));
+      return reply({ok:true,n:others.length});
+    }
+    const cur=tabs.find(t=>t.id===activeId && t.id!==item.id) || tabs.find(t=>t.id===follow.lastOther && t.id!==item.id) || null;
+    if(!cur) return reply({error:"no page"});
+    const cv=cur.view;
+    try{
+      if(req.op==="click"||req.op==="links"){
+        if(typeof window.OasisTabClick!=="function") return reply({error:"failed"});
+        const code="("+window.OasisTabClick.toString()+")("+JSON.stringify(req.op==="links"?"list":"click")+","+JSON.stringify(String(req.q||"").slice(0,200))+","+(Number(req.n)||0)+")";
+        cv.executeJavaScript(code).then(r=>reply(req.op==="links"?{ok:true,links:r||[],url:safeGetURL(cv),title:cur.tab.querySelector(".title").textContent||""}:(r||{error:"no answer"})),()=>reply({error:"failed"})); return;
+      }
+      if(req.op==="closecur"){
+        const at=tabs.findIndex(t=>t.id===cur.id); closeTab(cur.id);
+        if(follow.on && activeId===item.id){ const rest=tabs.filter(t=>t.id!==item.id); if(rest.length) activate((rest[Math.min(Math.max(0,at-1),rest.length-1)]).id); }
+        return reply({ok:true});
+      }
+      if(req.op==="reload"){ cv.reload(); return reply({ok:true}); }
+      if(req.op==="back"){ if(cv.canGoBack()){ cv.goBack(); return reply({ok:true}); } return reply({error:"nowhere"}); }
+      if(req.op==="forward"){ if(cv.canGoForward()){ cv.goForward(); return reply({ok:true}); } return reply({error:"nowhere"}); }
+      if(req.op==="scroll"){
+        const d=({down:"window.scrollBy({top:Math.round(window.innerHeight*0.8),behavior:'smooth'})",up:"window.scrollBy({top:-Math.round(window.innerHeight*0.8),behavior:'smooth'})",top:"window.scrollTo({top:0,behavior:'smooth'})",bottom:"window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'})"})[req.dir];
+        if(!d) return reply({error:"unknown"});
+        cv.executeJavaScript(d).then(()=>reply({ok:true}),()=>reply({error:"failed"})); return;
+      }
+      if(req.op==="text"){
+        cv.executeJavaScript("(document.body&&document.body.innerText)||''").then(t=>reply({ok:true,title:cur.tab.querySelector(".title").textContent||"",url:safeGetURL(cv),text:String(t||"").replace(/\n{3,}/g,"\n\n").slice(0,12000)}),()=>reply({error:"failed"})); return;
+      }
+    }catch(e){ return reply({error:"failed"}); }
+    return;
+  }
+  const target=tabs.find(t=>t.id===req.id);
+  if(!target) return reply({error:"no such tab"});
+  if(req.op==="activate"){ activate(target.id); return reply({ok:true}); }
+  if(req.op==="close"){
+    if(target.id===item.id) return reply({error:"chat tab"});
+    const wasActive=target.id===activeId, at=tabs.findIndex(t=>t.id===target.id);
+    closeTab(target.id);
+    // While a tab is being shared, land on another page (not back on the chat) so the AI keeps seeing something.
+    if(wasActive && follow.on && activeId===item.id){ const rest=tabs.filter(t=>t.id!==item.id); if(rest.length) activate((rest[Math.min(Math.max(0,at-1),rest.length-1)]).id); }
+    return reply({ok:true});
+  }
+  reply({error:"unknown"});
 }
 function closeTab(id){
   const i=tabs.findIndex(t=>t.id===id); if(i<0)return;
@@ -394,9 +386,9 @@ async function browserAction(action){
   }catch(e){return "Action failed: "+e.message}
 }
 async function askAI(prompt, context="", image=null){
-  const lmUrl = localStorage.getItem("oasis_lm_url") || DEFAULT_LM_URL;
+  const lmUrl = LM_PREF || localStorage.getItem("oasis_lm_url") || DEFAULT_LM_URL;
   const body={model:localStorage.getItem("oasis_ai_model")||"local-model",messages:[
-    {role:"system",content:"You are Oasis AI Browser. You can inspect the active webpage using text and an image. When the user asks you to operate the browser, return ONE JSON object and nothing else when an action is appropriate. Supported actions: {action:'navigate',url:'https://...'}, {action:'back'}, {action:'forward'}, {action:'reload'}, {action:'scroll',amount:650}, {action:'click',selector:'CSS selector'}, {action:'type',selector:'CSS selector',text:'...'}, or {action:'none',reply:'...'} if no browser action is needed. Prefer accessible CSS selectors such as button[aria-label='...'], input[name='q'], or exact IDs. Never invent that an action succeeded."},
+    {role:"system",content:"You are IcyWhite AI Browser. You can inspect the active webpage using text and an image. When the user asks you to operate the browser, return ONE JSON object and nothing else when an action is appropriate. Supported actions: {action:'navigate',url:'https://...'}, {action:'back'}, {action:'forward'}, {action:'reload'}, {action:'scroll',amount:650}, {action:'click',selector:'CSS selector'}, {action:'type',selector:'CSS selector',text:'...'}, or {action:'none',reply:'...'} if no browser action is needed. Prefer accessible CSS selectors such as button[aria-label='...'], input[name='q'], or exact IDs. Never invent that an action succeeded."},
     {role:"user",content: image ? [{type:"text",text:prompt+"\\n\\nVisible page text:\\n"+context},{type:"image_url",image_url:{url:image}}] : prompt+"\\n\\nVisible page text:\\n"+context}
   ],temperature:.2,max_tokens:1200};
   const r=await fetch(lmUrl+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
@@ -782,6 +774,7 @@ function renderMainPanel(menu){
   mainItem(menu,{label:"History",shortcut:"Ctrl+H",arrow:true,action:()=>{menuView="history";renderToolsMenu();}});
   mainItem(menu,{label:"Tab groups",arrow:true,action:()=>{menuView="groups";renderToolsMenu();}});
   mainItem(menu,{label:"Downloads",shortcut:"Ctrl+J",arrow:true,action:()=>{menuView="downloads";renderToolsMenu();}});
+  mainItem(menu,{label:"Passwords",shortcut:"Ctrl+Shift+K",action:()=>{closeDropdowns();if(typeof pwOpenModal==="function")pwOpenModal();}});
   sep(menu);
   mainItem(menu,{label:"Delete browsing data…",shortcut:"Ctrl+Shift+Delete",arrow:true,action:()=>{menuView="clear";renderToolsMenu();}});
   mainItem(menu,{label:"Print…",shortcut:"Ctrl+P",action:()=>{activeView()?.print();closeDropdowns();}});
@@ -795,8 +788,36 @@ function renderMainPanel(menu){
   mainItem(menu,{label:"About Oasis",action:()=>{window.oasisElectron?.showAbout?.();closeDropdowns();}});
   mainItem(menu,{label:IS_PRIVATE?"Close InPrivate window":"Close Oasis",action:()=>{window.oasisElectron?.closeWindow?.();}});
 }
+function openBuiltinApp(app){
+  const url=fileUrl(app.path), meta=appTabMeta(url);
+  makeTab(url, meta.title||app.label, meta.displayUrl);
+  closeDropdowns();
+}
+function appRow(menu,app){
+  const row=listRow(menu,app.label,"");
+  const em=document.createElement("span"); em.className="ddEmoji"; em.textContent=app.emoji||"•";
+  row.prepend(em);
+  row.addEventListener("click",()=>openBuiltinApp(app));
+}
+function renderBuiltinApps(menu){
+  const all=Object.values(window.OASIS_APPS||{});
+  if(!all.length) return;
+  const head=document.createElement("div"); head.className="ddHead"; head.textContent="Built-in apps"; menu.appendChild(head);
+  all.filter(a=>!a.group).forEach(a=>appRow(menu,a));
+  const dbgRow=listRow(menu,"Debug Log","Pop-up window");
+  const dem=document.createElement("span"); dem.className="ddEmoji"; dem.textContent="🐞"; dbgRow.prepend(dem);
+  dbgRow.addEventListener("click",()=>{ try{window.oasisElectron.debugOpen();}catch(e){} closeDropdowns(); });
+  const groups=[...new Set(all.filter(a=>a.group).map(a=>a.group))];
+  groups.forEach(g=>{
+    const h2=document.createElement("div"); h2.className="ddHead"; h2.textContent=g; menu.appendChild(h2);
+    all.filter(a=>a.group===g).forEach(a=>appRow(menu,a));
+  });
+  sep(menu);
+}
 function renderFavoritesPanel(menu){
   panelHeader(menu,"Favorites");
+  renderBuiltinApps(menu);
+  const fhead=document.createElement("div"); fhead.className="ddHead"; fhead.textContent="Your favorites"; menu.appendChild(fhead);
   const favs=loadFavorites();
   if(!favs.length){ emptyState(menu,"No favorites yet — click the star next to the address bar to save this page."); return; }
   favs.forEach(f=>{
@@ -807,7 +828,7 @@ function renderFavoritesPanel(menu){
 }
 function renderHistoryPanel(menu){
   panelHeader(menu,"History");
-  if(IS_PRIVATE){ emptyState(menu,"Oasis doesn't keep history in an InPrivate window."); return; }
+  if(IS_PRIVATE){ emptyState(menu,"IcyWhite doesn't keep history in an InPrivate window."); return; }
   const hist=loadHistory();
   if(!hist.length){ emptyState(menu,"No browsing history yet."); return; }
   hist.slice(0,40).forEach(h=>{
@@ -902,17 +923,25 @@ function renderClearDataPanel(menu){
 function renderSettingsPanel(menu){
   panelHeader(menu,"Settings");
   const wrap=document.createElement("div"); wrap.className="ddSettingsForm";
-  const lm=localStorage.getItem("oasis_lm_url")||DEFAULT_LM_URL;
+  const lm=LM_PREF||localStorage.getItem("oasis_lm_url")||DEFAULT_LM_URL;
   const model=localStorage.getItem("oasis_ai_model")||"local-model";
   wrap.innerHTML=`
     <label class="ddLabel">AI server URL (LM Studio)</label>
     <input class="ddInput" id="setLmUrl" value="${escapeHtml(lm)}">
     <label class="ddLabel">AI model name</label>
     <input class="ddInput" id="setModel" value="${escapeHtml(model)}">
-    <button class="ddFooterBtn ddPrimary" id="setSave">Save</button>`;
+    <button class="ddFooterBtn ddPrimary" id="setSave">Save</button>
+    <button class="ddFooterBtn" id="setDbgOpen" title="Open the debug log in a pop-up window">🐞 Debug log</button>
+    <button class="ddFooterBtn" id="setDbgCopy" title="Copy the whole debug log to the clipboard">Copy log</button>`;
   menu.appendChild(wrap);
+  wrap.querySelector("#setDbgOpen").addEventListener("click",e=>{ e.stopPropagation(); try{window.oasisElectron.debugOpen();}catch(err){} });
+  wrap.querySelector("#setDbgCopy").addEventListener("click",async e=>{
+    e.stopPropagation(); const btn=e.currentTarget; let ok=false;
+    try{ const r=await window.oasisElectron.debugCopy(); ok=!!(r&&r.ok); }catch(err){}
+    btn.textContent=ok?"Copied ✓":"Copy failed"; setTimeout(()=>{btn.textContent="Copy log";},1600);
+  });
   wrap.querySelector("#setSave").addEventListener("click",()=>{
-    localStorage.setItem("oasis_lm_url",wrap.querySelector("#setLmUrl").value.trim());
+    localStorage.setItem("oasis_lm_url",wrap.querySelector("#setLmUrl").value.trim()); LM_PREF=wrap.querySelector("#setLmUrl").value.trim(); try{window.oasisElectron.setPref("lm_url",LM_PREF)}catch(e){}
     localStorage.setItem("oasis_ai_model",wrap.querySelector("#setModel").value.trim());
     const btn=wrap.querySelector("#setSave"); btn.textContent="Saved"; setTimeout(()=>closeDropdowns(),500);
   });
@@ -1008,5 +1037,6 @@ window.addEventListener("keydown",e=>{
   if(e.key==="Escape"){closeDropdowns();closeTabContextMenu();if($("findBar").classList.contains("open"))closeFindBar();}
 });
 </script>
+<script src="js/passwords-ui.js"></script>
 </body>
 </html>

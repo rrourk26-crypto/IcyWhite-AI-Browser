@@ -70,9 +70,9 @@
       class="settings-toggle"
       onclick="toggleSettings()"
       title="Show or hide Settings"
-      aria-expanded="true"
+      aria-expanded="false"
       aria-controls="settings"
-    >✕ Settings</button>
+    >⚙ Settings</button>
 
     <button
       id="themeToggle"
@@ -116,7 +116,7 @@
      MAIN — three columns: chats | conversation | settings
 ======================================================= -->
 
-<section class="main">
+<section class="main settings-hidden">
 
   <aside
     class="people"
@@ -251,6 +251,15 @@
        SETTINGS — right sidebar, Messenger "chat info" style
   ===================================================== -->
 
+  <!-- The connection comes from the IcyWhite browser's own Settings (server, key and model).
+       These hidden fields just hold what the browser is using so the rest of the Lobby can read them. -->
+  <div id="browserConnection" hidden aria-hidden="true">
+    <input type="hidden" id="apiBase" value="">
+    <input type="hidden" id="apiKey" value="">
+    <select id="model"><option value=""></option></select>
+    <select id="plainModel"><option value=""></option></select>
+  </div>
+
   <aside
     class="settings"
     id="settings"
@@ -258,78 +267,8 @@
 
     <div class="settings-head">
       Settings
-      <div class="sub">Connection, characters &amp; behavior — saved automatically</div>
+      <div class="sub">Characters &amp; behavior — saved automatically (the AI connection comes from the browser settings)</div>
     </div>
-
-    <details class="settings-section" open>
-      <summary>Model connection</summary>
-      <div class="settings-body">
-
-        <div>
-          <label>API base URL</label>
-          <div class="field-with-paste">
-            <input
-              id="apiBase"
-              value=""
-              placeholder="http://localhost:1234/v1"
-              oninput="persistState()"
-            >
-            <button
-              type="button"
-              class="paste-btn"
-              title="Paste"
-              onclick="pasteIntoField('apiBase')"
-            >📋</button>
-          </div>
-        </div>
-
-        <div>
-          <label>API key</label>
-          <div class="field-with-paste">
-            <input
-              id="apiKey"
-              type="password"
-              value=""
-              placeholder="Usually blank for local servers"
-              oninput="persistState()"
-            >
-            <button
-              type="button"
-              class="paste-btn"
-              title="Paste"
-              onclick="pasteIntoField('apiKey')"
-            >📋</button>
-          </div>
-        </div>
-
-        <div>
-          <label>Character model</label>
-          <select id="model" title="Character model" onchange="persistState()">
-            <option value="qwen/qwen3-vl-8b">qwen/qwen3-vl-8b</option>
-          </select>
-          <div class="model-help">
-            Used by every character except plain Admin.
-          </div>
-        </div>
-
-        <div>
-          <label>Plain Admin model</label>
-          <select id="plainModel" title="Plain Admin model" onchange="persistState()">
-            <option value="qwen/qwen3-vl-8b">qwen/qwen3-vl-8b</option>
-          </select>
-          <div class="model-help">
-            The model used by @Admin for room moderation and private conversations.
-          </div>
-        </div>
-
-        <div class="settings-fetch-row">
-          <button class="ghostbtn" style="flex:1" onclick="loadModels()">
-            🔄 Refresh models
-          </button>
-        </div>
-
-      </div>
-    </details>
 
     <details class="settings-section">
       <summary>Characters &amp; room</summary>
@@ -440,7 +379,7 @@
       </div>
     </details>
 
-    <details class="settings-section" open>
+    <details class="settings-section">
       <summary>Live world: weather, images &amp; news</summary>
       <div class="settings-body">
         <div>
@@ -586,80 +525,6 @@
 </div>
 
 
-<div
-  class="editor"
-  id="startupModal"
->
-
-  <div class="editor-box">
-
-    <div class="editor-title">
-      <span
-        class="avatar"
-        style="width:26px;height:26px;font-size:13px"
-      >⚡</span>
-      <span>Connect to The Lobby</span>
-    </div>
-
-    <div class="editor-body">
-
-      <label>Server type</label>
-      <select id="startupProvider" onchange="onStartupProviderChange()">
-        <option value="lmstudio">LM Studio (local)</option>
-        <option value="ollama">Ollama (local, OpenAI-compatible)</option>
-        <option value="openai">OpenAI</option>
-        <option value="openrouter">OpenRouter</option>
-        <option value="other">Other (OpenAI-compatible)</option>
-      </select>
-      <div class="model-help">
-        This app talks to OpenAI-style <code>/chat/completions</code> servers. Anthropic's Claude API uses a different format and isn't wired up here yet — pick "Other" for any compatible server.
-      </div>
-
-      <label>API base URL</label>
-      <input
-        id="startupApiBase"
-        list="apiHistoryList"
-        placeholder="http://localhost:1234/v1"
-      >
-      <datalist id="apiHistoryList"></datalist>
-      <div class="model-help">
-        Past addresses you've used will show up as suggestions here.
-      </div>
-
-      <label>API key</label>
-      <input
-        id="startupApiKey"
-        type="password"
-        placeholder="Usually blank for local servers"
-      >
-      <div class="model-help">
-        Stored locally in this browser only. Required for OpenAI/OpenRouter, usually blank for LM Studio/Ollama.
-      </div>
-
-      <div class="editor-buttons">
-        <button
-          class="smallbtn"
-          onclick="skipStartupModal()"
-        >
-          Skip for now
-        </button>
-
-        <button
-          class="send"
-          style="min-width:110px;padding:8px 14px"
-          onclick="confirmStartupModal()"
-        >
-          Continue
-        </button>
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
 <script src="js/characters/mike.js"></script>
 <script src="js/characters/sarah.js"></script>
 <script src="js/characters/dave.js"></script>
@@ -672,6 +537,7 @@
 <script src="js/characters/becky.js"></script>
 <script src="js/characters/custom-network.js"></script>
 <script src="js/phones.js"></script>
+<script src="js/browser-connection.js"></script>
 <script src="js/app.js"></script>
 
 </body>

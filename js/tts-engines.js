@@ -106,7 +106,7 @@
   let puterP = null;
   const loadPuter = () => window.puter ? Promise.resolve(window.puter) : puterP || (puterP = new Promise((res, rej) => {
     const s = document.createElement("script"); s.src = "https://js.puter.com/v2/";
-    s.onload = () => res(window.puter); s.onerror = () => { puterP = null; rej(new Error("Couldn't load Puter.js. Check your internet connection.")); };
+    s.onload = () => { try { if (cfg.puterToken && window.puter && typeof window.puter.setAuthToken === "function") window.puter.setAuthToken(cfg.puterToken); } catch (e) {} res(window.puter); }; s.onerror = () => { puterP = null; rej(new Error("Couldn't load Puter.js. Check your internet connection.")); };
     document.head.appendChild(s);
   }));
   const PUTER_NAMES = { "aws-polly": "Amazon Polly", openai: "OpenAI", elevenlabs: "ElevenLabs", gemini: "Google Gemini", xai: "xAI" };
@@ -118,7 +118,17 @@
 
   async function puterAuthStatus() {
     try {
-      const p = await loadPuter(), ok = await p.auth.isSignedIn();
+      const p = await loadPuter();
+      if (cfg.puterToken) {   // signed in with a pasted token instead of the sign-in window
+        if (typeof p.setAuthToken !== "function") { if (cfg.engine === "puter") status("This version of Puter.js can't use a pasted token. Choose Kokoro in your browser instead."); return; }
+        try {
+          p.setAuthToken(cfg.puterToken);
+          const u = await p.auth.getUser();
+          if (cfg.engine === "puter") status("Puter accepted your token" + (u && u.username ? " (signed in as " + u.username + ")" : "") + ". Send a message to hear the voice. If it stays silent, Puter is refusing voice requests from this app: use Kokoro in your browser.");
+        } catch (e) { if (cfg.engine === "puter") status("Puter didn't accept the token (" + errText(e) + "). Copy it again from puter.com/dashboard#account, or use Kokoro in your browser."); }
+        return;
+      }
+      const ok = await p.auth.isSignedIn();
       if (cfg.engine !== "puter") return;
       if (ok) { let n = ""; try { n = (await p.auth.getUser()).username; } catch (e) {} status("Signed in to Puter" + (n ? " as " + n : "") + ". The free cloud voices are ready."); }
       else status("Click “Sign in to Puter” once (a free account; it opens a small window). After that the voices work.");
@@ -127,7 +137,11 @@
   async function puterSignIn() {
     status("Opening the Puter sign-in window…");
     try { const p = await loadPuter(); await p.auth.signIn(); await puterAuthStatus(); }
-    catch (e) { status("Puter sign-in didn't finish (" + errText(e) + "). Allow pop-ups for this page and try again."); }
+    catch (e) {
+      const why = errText(e);
+      if (/unsupported_origin/i.test(why)) status("Puter doesn't allow sign-in from this app (it runs from local files). Paste your Puter token in the box below instead (see the note under it), or choose \u201cKokoro in your browser\u201d: free, natural, and needs no account.");
+      else status("Puter sign-in didn't finish (" + why + "). Allow pop-ups for this page and try again.");
+    }
   }
 
   /* ---------- Engines: how to list voices and how to turn a sentence into audio ---------- */
@@ -205,6 +219,7 @@
     return new Promise((resolve) => {
       const a = new Audio(url); a._url = url; cur = a; curDone = resolve;
       a.playbackRate = it.opts.rate || 1;
+      if (typeof it.opts.volume === "number") a.volume = Math.min(1, Math.max(0, it.opts.volume));
       let over = false;
       const finish = (msg) => {
         if (over) return; over = true;
@@ -235,6 +250,7 @@
   window.LMChatTTS = {
     active() { return cfg.engine !== "browser" && engines[cfg.engine] ? this : null; },
     speak(text, opts) { q.push({ text, opts: opts || {}, epoch, engine: cfg.engine, voice: voiceId(), p: null }); run(); },
+    setVolume(v) { if (cur) { try { cur.volume = Math.min(1, Math.max(0, v)); } catch (e) {} } },   // change the voice that is playing right now
     cancel() {
       epoch++;
       q.splice(0).forEach((it) => { if (it.p) it.p.then(revoke); });
@@ -266,7 +282,7 @@
   function refreshUI() {
     const e = cfg.engine, neural = e !== "browser";
     engSel.value = e;
-    show("browserVoiceRow", !neural); show("engineBox", neural); show("serverBox", e === "kokoro-server"); show("puterSignIn", e === "puter");
+    show("browserVoiceRow", !neural); show("engineBox", neural); show("serverBox", e === "kokoro-server"); show("puterSignIn", e === "puter"); show("puterTokenBox", e === "puter");
     $("ttsUrl").value = cfg.url; $("ttsKey").value = cfg.key;
     status(e === "kokoro-web" ? "First use downloads the Kokoro voice model (about 90 MB) once, then it's cached." : "");
     if (neural) fillVoices().then(() => { if (e === "puter") puterAuthStatus(); });
@@ -276,6 +292,14 @@
   voiceSel.onchange = () => { cfg.voices[cfg.engine] = voiceSel.value; save(); };
   $("ttsRefresh").onclick = () => fillVoices().then(() => { if (cfg.engine === "puter") puterAuthStatus(); });
   $("puterSignIn").onclick = puterSignIn;
+  $("puterToken").value = cfg.puterToken || "";
+  $("puterToken").onchange = () => {
+    const v = $("puterToken").value.trim().replace(/^bearer\s+/i, "");
+    if (v) cfg.puterToken = v; else delete cfg.puterToken;
+    save(); window.LMChatTTS.cancel();
+    if (window.puter && v && typeof window.puter.setAuthToken === "function") { try { window.puter.setAuthToken(v); } catch (e) {} }
+    if (cfg.engine === "puter") { status(v ? "Checking your token\u2026" : "Token removed."); if (v) puterAuthStatus(); }
+  };
   $("ttsUrl").onchange = () => { cfg.url = $("ttsUrl").value.trim() || "http://localhost:8880/v1"; save(); fillVoices(); };
   $("ttsKey").onchange = () => { cfg.key = $("ttsKey").value.trim(); save(); fillVoices(); };
   if (!engines[cfg.engine]) cfg.engine = "browser";

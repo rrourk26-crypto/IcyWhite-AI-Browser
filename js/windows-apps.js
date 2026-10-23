@@ -36,7 +36,7 @@
   add("System & diagnostics", "task-manager", "Task Manager", "exe", { file: "taskmgr.exe" },
     ["taskmgr", "task mgr", "show task manager", "bring up task manager", "show me what's running", "whats running", "what is running", "running programs", "end task", "ctrl shift esc"]);
   add("System & diagnostics", "resource-monitor", "Resource Monitor", "exe", { file: "resmon.exe" },
-    ["resmon", "system resources", "show system resources", "show me resource usage", "resource usage", "resources monitor", "show resource usage", "memory usage monitor", "disk usage monitor"]);
+    ["resmon", "resources monitor", "memory usage monitor", "disk usage monitor"]);
   add("System & diagnostics", "performance-monitor", "Performance Monitor", "exe", { file: "perfmon.exe" },
     ["perfmon", "perf monitor", "performance counters"]);
   add("System & diagnostics", "reliability-monitor", "Reliability Monitor", "exe", { file: "perfmon.exe", args: ["/rel"] },
@@ -193,10 +193,11 @@
   Q("q-gpu", "GPU & video memory", ["gpu", "graphics card", "video card", "what gpu do i have", "what graphics card do i have", "my gpu", "vram", "how much vram do i have", "how much vram", "video memory", "graphics info", "gpu info"]);
   Q("q-drives", "Drives & disks", ["drives", "disks", "what drives do i have", "my drives", "disk drives", "storage devices", "hard drives", "how much disk space do i have", "disk space", "free disk space info", "list drives", "list my drives"]);
   Q("q-network-adapters", "Network adapters", ["network adapter info", "list network adapters", "network cards", "nic info", "my network adapters"]);
-  Q("q-processes", "Running processes", ["processes", "show running processes", "running processes", "what programs are running", "what programs are running right now", "list processes", "list running processes", "get-process", "show processes", "what processes are running", "what apps are running"]);
-  Q("q-processes-cpu", "Top processes by CPU (right now)", ["whats using the most cpu", "what's using the most cpu", "what is using the most cpu", "top cpu", "top cpu processes", "cpu hogs", "what is using my cpu", "whats using my cpu", "highest cpu", "most cpu"]);
+  Q("q-processes", "Running processes", ["processes", "show running processes", "running processes", "what programs are running", "what programs are running right now", "list processes", "list running processes", "get-process", "show processes", "what processes are running", "what apps are running"], { alsoOpen: "task-manager" });
+  Q("q-resources", "System resources (CPU, memory, disk)", ["system resources", "show system resources", "my system resources", "check system resources", "resources", "resource usage", "show resource usage", "show me resource usage", "system usage", "system performance", "how is my pc doing", "how is my computer doing", "how is my cpu doing", "cpu usage", "cpu and ram usage", "ram usage", "memory usage", "how much ram am i using", "how much memory am i using", "how much cpu am i using", "how much cpu is being used", "how much ram is being used", "pc performance", "computer performance", "system load"], { alsoOpen: "resource-monitor" });
+  Q("q-processes-cpu", "Top processes by CPU (right now)", ["whats using the most cpu", "what's using the most cpu", "what is using the most cpu", "top cpu", "top cpu processes", "cpu hogs", "what is using my cpu", "whats using my cpu", "highest cpu", "most cpu"], { alsoOpen: "task-manager" });
   Q("q-processes-cpu-time", "Top processes by total CPU time", ["processes by cpu time", "total cpu time", "cpu time by process", "sort processes by cpu"]);
-  Q("q-processes-ram", "Top processes by RAM", ["whats using the most ram", "what's using the most ram", "what is using the most ram", "whats using the most memory", "what's using the most memory", "top ram", "top ram processes", "memory hogs", "what is using my ram", "whats using my ram", "highest memory", "most ram", "most memory"]);
+  Q("q-processes-ram", "Top processes by RAM", ["whats using the most ram", "what's using the most ram", "what is using the most ram", "whats using the most memory", "what's using the most memory", "top ram", "top ram processes", "memory hogs", "what is using my ram", "whats using my ram", "highest memory", "most ram", "most memory"], { alsoOpen: "task-manager" });
   Q("q-tasklist", "tasklist", ["tasklist", "task list"]);
   Q("q-tasklist-v", "tasklist /v (verbose)", ["tasklist /v", "tasklist verbose", "verbose task list", "verbose tasklist"]);
   Q("q-powercfg-list", "Power plans (powercfg /list)", ["powercfg /list", "powercfg list", "list power plans", "list power schemes", "power schemes"]);

@@ -1,0 +1,4 @@
+/* Daily fact: the fact text is clickable (asks the AI about it and adds a link). */
+#factText { cursor: pointer; border-radius: 8px; transition: color .15s; }
+#factText:hover { text-decoration: underline; text-decoration-color: rgba(43,127,214,.55); text-underline-offset: 4px; }
+#factText:focus-visible { outline: 2px solid #2b7fd6; outline-offset: 3px; }

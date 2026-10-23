@@ -1,0 +1,15 @@
+/* "Voice commands" window: the list of everything you can say in live chat. */
+#voiceHelp { width: min(880px, 94vw); max-height: 88vh; padding: 0; border: 1px solid var(--composer-line, rgba(43,127,214,.3)); border-radius: 16px; background: var(--composer, #fff); color: var(--text, #14202e); font-family: var(--font, system-ui, sans-serif); box-shadow: 0 20px 60px rgba(0,0,0,.28); overflow: hidden; }
+#voiceHelp[open] { display: flex; flex-direction: column; }
+#voiceHelp::backdrop { background: rgba(10,20,35,.45); }
+#voiceHelp .vh-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 4px; }
+#voiceHelp h2 { margin: 0; font-size: 19px; }
+#voiceHelp .vh-note { margin: 4px 20px 10px; color: var(--muted, #4f6279); font-size: 13.5px; line-height: 1.45; }
+#voiceHelp .vh-filter { margin: 0 20px 10px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--composer-line, rgba(43,127,214,.3)); background: transparent; color: inherit; font: inherit; }
+#voiceHelp .vh-body { overflow: auto; padding: 0 20px 18px; }
+#voiceHelp .vh-group h3 { margin: 16px 0 6px; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--accent, #2b7fd6); }
+#voiceHelp .vh-row { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 4px 16px; padding: 7px 0; border-top: 1px solid rgba(120,140,170,.18); align-items: start; }
+#voiceHelp .vh-say { display: flex; flex-wrap: wrap; gap: 5px; }
+#voiceHelp code { font: 13px/1.35 var(--font, system-ui, sans-serif); background: rgba(43,127,214,.10); border-radius: 7px; padding: 2px 7px; }
+#voiceHelp .vh-does { font-size: 13.5px; color: var(--muted, #4f6279); line-height: 1.4; }
+@media (max-width: 620px) { #voiceHelp .vh-row { grid-template-columns: 1fr; } }

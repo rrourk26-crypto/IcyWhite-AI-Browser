@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>IcyWhite - Debug log</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { color-scheme: light dark; --bg:#f5f9fd; --fg:#111822; --mut:#5d6b80; --bar:#e3eaf4; --line:#cfd9e8; --err:#c0392b; --warn:#9a5b00; --btn:#d3deee; --btnh:#c1cfe4; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0e131c; --fg:#dbe4f0; --mut:#8d9bb0; --bar:#171f2c; --line:#263145; --err:#ff7b6b; --warn:#f0b35a; --btn:#243044; --btnh:#2e3d56; } }
+  html, body { height: 100%; margin: 0; }
+  body { display: flex; flex-direction: column; background: var(--bg); color: var(--fg); font: 13px "Segoe UI", system-ui, sans-serif; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 10px; background: var(--bar); border-bottom: 1px solid var(--line); }
+  .bar .sp { flex: 1; }
+  button { padding: 6px 12px; border: 0; border-radius: 8px; background: var(--btn); color: var(--fg); font: inherit; font-weight: 600; cursor: pointer; }
+  button:hover { background: var(--btnh); }
+  label { display: flex; align-items: center; gap: 5px; color: var(--mut); cursor: pointer; user-select: none; }
+  #count { color: var(--mut); }
+  #log { flex: 1; overflow: auto; padding: 10px 12px; font: 12px/1.55 Consolas, "Cascadia Mono", monospace; }
+  #log div { white-space: pre-wrap; word-break: break-word; }
+  .l-error { color: var(--err); } .l-warn { color: var(--warn); }
+  .empty { color: var(--mut); font-family: inherit; }
+</style>
+</head>
+<body>
+  <div class="bar">
+    <button id="copy" title="Copy the whole log to the clipboard">Copy log</button>
+    <button id="clear" title="Remove everything from the log">Clear</button>
+    <label><input type="checkbox" id="only"> Errors &amp; warnings only</label>
+    <label><input type="checkbox" id="pin" checked> Keep on top</label>
+    <span class="sp"></span>
+    <span id="count"></span>
+  </div>
+  <div id="log" aria-live="polite"></div>
+<script>
+(function () {
+  "use strict";
+  const $ = (id) => document.getElementById(id), B = window.oasisElectron, box = $("log");
+  let lines = [];
+  function render() {
+    const atEnd = box.scrollHeight - box.scrollTop - box.clientHeight < 40;
+    const only = $("only").checked, show = lines.filter((l) => !only || l.level !== "info");
+    box.textContent = "";
+    if (!show.length) { const d = document.createElement("div"); d.className = "empty"; d.textContent = only ? "No errors or warnings. 🎉" : "Nothing logged yet."; box.appendChild(d); }
+    show.forEach((l) => { const d = document.createElement("div"); d.className = "l-" + l.level; d.textContent = l.text; box.appendChild(d); });
+    $("count").textContent = lines.length + (lines.length === 1 ? " entry" : " entries");
+    if (atEnd) box.scrollTop = box.scrollHeight;
+  }
+  async function load() { try { const r = await B.debugGet(); lines = (r && r.lines) || []; } catch (e) { lines = []; } render(); box.scrollTop = box.scrollHeight; }
+  if (!B || !B.debugGet) { box.textContent = "The debug log needs the desktop app."; return; }
+  B.onDebugLine((l) => { lines.push(l); if (lines.length > 3000) lines.shift(); render(); });
+  $("only").onchange = render;
+  $("pin").onchange = () => { try { B.debugPin($("pin").checked); } catch (e) {} };
+  $("copy").onclick = async () => {
+    const b = $("copy"); let ok = false;
+    try { const r = await B.debugCopy(); ok = !!(r && r.ok); } catch (e) {}
+    b.textContent = ok ? "Copied ✓" : "Copy failed"; setTimeout(() => { b.textContent = "Copy log"; }, 1600);
+  };
+  $("clear").onclick = async () => { try { await B.debugClear(); } catch (e) {} load(); };
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") window.close(); });
+  load();
+})();
+</script>
+</body>
+</html>

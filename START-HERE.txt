@@ -149,7 +149,7 @@ OPENING WINDOWS TOOLS (new)
 Ask the AI to open a Windows app or utility and it launches the real program on your desktop (outside the
 browser, not in a tab):  "Open Task Manager", "show system resources", "open Device Manager", "open Event
 Viewer", "open Power Options", "open Windows Update", "open my D drive", "open Downloads", "open Calculator" ...
-Oasis apps and websites ("open the Lobby", "open YouTube") still open in a NEW Oasis tab.
+IcyWhite apps and websites ("open the Lobby", "open YouTube") still open in a NEW IcyWhite tab.
 
   * Vague requests ("open performance") get a question: Task Manager, Resource Monitor, or Performance Monitor?
   * It can also answer questions about your PC without opening anything (CPU, RAM, GPU + video memory, Windows
@@ -167,3 +167,283 @@ name up in js/windows-apps.js (the one list of tools, their aliases, and which n
 fixed PowerShell Start-Process script. To add a tool, add one line to js/windows-apps.js. This is separate from
 the "run commands" feature above, which still works exactly as before.
 Tests: from the app folder run  node --test tests/windows-launcher.test.js
+
+
+LIVE VOICE CHAT + MICROPHONE NOW WORK (added to v20)
+----------------------------------------------------
+  * Cause: Chrome and Edge transcribe your voice by sending it to Google's online speech service. The IcyWhite app is
+    Electron (Chromium WITHOUT Google's service key), so the microphone recogniser always failed with "network".
+  * Fix: new file js/stt-local.js runs Whisper speech recognition on this computer. It listens to the mic, notices
+    when you pause, transcribes that phrase and hands the text to the same Live chat / Dictate code as before.
+  * FIRST USE NEEDS INTERNET: the speech model (about 40 MB) downloads once, then it is cached and works offline.
+    Progress shows in the Live chat bar and in Settings > Voice.
+  * Settings > Voice > "Voice input (microphone)": Automatic (default), Whisper base English (more accurate),
+    Whisper base multilingual (other languages), or the browser's own service (only works in real Chrome/Edge).
+  * If the microphone is blocked on Windows: Settings > Privacy & security > Microphone > turn on
+    "Let desktop apps access your microphone".
+  * Only js/stt-local.js (new), js/voice.js and index.html (one setting + one script tag) changed.
+    Autopilot, speak-up, Windows tools, wallpapers and apps are untouched.
+
+
+LOCAL MODELS WITH llama.cpp + PACKAGING IN ELECTRON (v21)
+---------------------------------------------------------
+LM Studio still works exactly as before. New: Settings > "Local model (llama.cpp)" runs your own .gguf files with
+the llama-server.exe from the llama.cpp CUDA download. Pick a model, press "Start & use", and the chat switches to it
+(address http://127.0.0.1:<port>/v1). "Use LM Studio" switches back. Vision models work if the file named *mmproj*.gguf
+sits in the same folder as the model. Closing IcyWhite stops the server.
+
+WHERE TO PUT THE FILES
+  During development (npm start):  in this app folder, either flat like your old setup
+      llama-server.exe, ggml*.dll, llama*.dll, mtmd.dll, cublas*.dll, cudart64_12.dll, libomp.dll  ...next to main.js
+  or inside a folder called  llama  (same files). Models go in a folder called  models  (subfolders are fine).
+  Installed / portable app:  the build copies the llama files to  resources\llama.  Models are NOT put inside the
+  installer (they are many GB). Put them in  <folder of IcyWhite.exe>\models  or press "Models folder..." in Settings and
+  pick any folder. The choice is remembered.
+  Settings you can change: context size, GPU layers (99 = all on the GPU, 0 = CPU only), extra llama-server options,
+  and "start automatically when IcyWhite opens".
+
+RUNTIMES: ONE FOLDER PER llama.cpp BUILD, PICKED AUTOMATICALLY (new)
+--------------------------------------------------------------------
+You can keep several llama.cpp builds side by side, for example the NVIDIA CUDA one and a CPU-only one, each in its
+own folder (llama-server.exe + all its .dll files) inside a folder named  runtimes  next to the app:
+    runtimes\llama.cpp-GPU-NVIDIA CUDA\llama-server.exe  ...
+    runtimes\llama-cpu\llama-server.exe  ...
+Folders up to three levels deep are searched, "models" folders are skipped. Keep them somewhere else? Press
+"Runtimes folder..." in Settings > Local model and pick the folder that holds them (the choice is remembered).
+IcyWhite reads the files in each folder to tell what it is (ggml-cuda.dll = NVIDIA CUDA, ggml-vulkan.dll = Vulkan,
+ggml-hip.dll = AMD, ggml-sycl.dll = Intel, only ggml-cpu-*.dll = CPU) and checks this PC's graphics card:
+    NVIDIA card (and a driver new enough)  -> the CUDA runtime
+    AMD card        -> HIP if you have it, otherwise Vulkan, otherwise CPU
+    Intel Arc card  -> SYCL or Vulkan, otherwise CPU        (Intel built-in graphics -> CPU)
+    no graphics card / nothing fits         -> the CPU runtime
+Settings > Local model > Runtime shows what was found and what is being used, and lets you pick one by hand.
+If an automatically chosen GPU runtime cannot start (missing DLL, no usable GPU), IcyWhite switches to the CPU
+runtime once and tells you. Running out of memory is NOT switched silently: lower GPU layers or the context size.
+A "models" folder inside a runtime folder is used for models too. The old layouts (./llama, files next to main.js)
+still work. For the installer, ./runtimes is copied into resources\runtimes (models, .gguf and .bat files are left out).
+
+BUILD THE .EXE  (on Windows, in this folder)
+  1. npm install
+  2. Put llama-server.exe + all its .dll files here (flat, in ./llama, or in "llama.cpp-GPU-NVIDIA CUDA").
+  3. npm run build:win        -> dist\IcyWhite-Setup-<version>.exe  (installer)
+     npm run build:portable   -> single portable .exe (slow to start: it unpacks ~1 GB of CUDA files each launch)
+     npm run build:dir        -> dist\win-unpacked\ folder, runs without installing (best for a USB drive / zip)
+  The "prepare:llama" step gathers the llama files into ./llama and stops with a message if llama-server.exe is missing.
+  Do not put the models in the app folder before building.
+
+If it will not start: open Settings > Local model > Server log. Common fixes: a missing .dll next to llama-server.exe,
+"out of memory" (lower GPU layers or context size), or a model that needs a newer llama.cpp build.
+Tests: npm test      (includes tests/llama-manager.test.js, which uses a stand-in server)
+New files: llama-manager.js, js/llama-local.js, scripts/prepare-llama.js. Changed: main.js, project-preload.js,
+index.html, js/app.js (small hook + wording), package.json.
+
+
+SETTINGS TABS (v22)
+-------------------
+Settings is now split into tabs (General, Connection, Local model, Behavior, Images & search, Voice) so it fits on one
+screen with no scrolling. All fields work as before. Under Local model there is a loading bar below the model name: blue
+while the model loads (an estimate, because llama-server gives no percentage), green and "Ready" when it is running,
+red if it fails. The model drop-down no longer spills over the next column.
+
+
+AUTOMATIC SERVER ADDRESS (v23)
+------------------------------
+Settings > Connection has "Quick set" buttons: LM Studio (http://127.0.0.1:1234/v1), Ollama (http://127.0.0.1:11434/v1)
+and Local model (http://127.0.0.1:8080/v1). Clicking one fills the address box and switches right away.
+  * "Start & use" on the Local model tab switches to the local address by itself.
+  * Stop, or "Use LM Studio", switches back by itself (Stop returns to whichever of LM Studio / Ollama you used before).
+  * The address box is still there: type any other address and Save.
+
+
+ICYWHITE (v24)
+--------------
+The app is now called IcyWhite and uses a light, icy-white theme (Home page, tab bar, menus, dialogs). Your chats, settings
+and logins are kept: IcyWhite keeps using the data folder of the old Oasis Browser if it exists. Live TV (tv.html) and any
+apps in the "apps" folder keep their own look. The installer is now IcyWhite-Setup-<version>.exe and uses a new app id,
+so it installs next to an old Oasis install instead of replacing it (uninstall the old one when you are happy).
+
+
+LIGHT / DARK AND FIRST-RUN WELCOME (v25)
+----------------------------------------
+Appearance: Settings > General > Appearance = Light (IcyWhite), Dark (the old look) or Match my system. It applies at once
+to the Home page, the tab bar, menus and the screen-share picker, and is remembered. Live TV and apps in the "apps" folder
+keep their own look.
+Welcome screen: on a brand-new install (nothing saved yet) IcyWhite shows a short checklist: theme, is llama-server found,
+is there a models folder with .gguf files, Start & use (with a loading bar), or use LM Studio / Ollama if they are running.
+Existing installs are not interrupted. Run it any time from Settings > Local model > "Setup guide...".
+Also fixed: the AI panel in the tab bar now follows the server address chosen on the Home page (it keeps separate storage,
+so the address is shared through the app instead).
+Files: css/style.css (light), css/style-dark.css, css/shell-light.css, css/shell-dark.css, css/welcome.css,
+js/theme.js, js/welcome.js.
+
+
+v26: Off-white light theme (softer than pure white). A moon/sun button in the top bar (right of the connection pill) flips
+between light and dark; Settings > General > Appearance still has Light / Dark / Match my system. Sliders use the app's blue.
+Settings tabs are a little tighter so each one fits a ~700 px tall window without scrolling.
+
+
+LOCAL SERVER SETTINGS, DAILY FACT LINKS, APPS ON EVERY MODEL (v27)
+------------------------------------------------------------------
+Settings > Local model now has the controls of a real model server. Context size, GPU layers and "extra options" are at
+the top as before; four folding sections sit below the Start / Stop buttons. Settings are saved as you change them and
+apply the next time you press "Start & use" (a note appears if the server is already running). Anything left on
+"Default" is simply not passed to llama-server, so it behaves exactly as before.
+  * Server & network: Serve on (this computer only / local network 0.0.0.0 / one specific address), Port, API key
+    (Generate / Show), CORS (all websites / only a list of websites / nobody), parallel requests, request timeout, HTTP
+    threads, llama.cpp's own web page, metrics, slots, embeddings, chat template (Jinja) and template override, reasoning
+    format, thinking on/off, image understanding on/off.
+  * Performance & memory: batch and micro-batch size, CPU threads, flash attention, KV cache type (keys / values), keep KV
+    on GPU, mlock, memory-map, warm-up, context shift, tokens to keep, RoPE scaling / scale (longer context), multi-GPU
+    split, main GPU, GPU split ratio.
+  * Sampling defaults: temperature, top-k, top-p, min-p, repeat penalty, max tokens per reply, seed (these are for other
+    programs that connect; the IcyWhite chat sends its own temperature).
+  * Command line & reset: shows the exact llama-server command that will run, and "Reset all server settings to defaults".
+  * Addresses (IP display): while the server runs, a box under the status shows every address it can be reached at, e.g.
+    "This computer  http://127.0.0.1:8080/v1" and "Network (Wi-Fi)  http://192.168.1.5:8080/v1", each with a Copy button,
+    plus the CORS rule and whether an API key is needed.
+How the API key and CORS work: with the defaults (no key, CORS for all) llama-server runs by itself as before. As soon as
+you set a key or a CORS rule, llama-server hides on a private port on this computer and a small "front door"
+(cors-proxy.js) listens on the address and port you chose: it answers browser pre-flight requests, adds or removes the CORS
+headers, checks the key from other computers (IcyWhite itself on this computer never needs it; /health is always open) and
+streams replies straight through. IcyWhite's own pages always work whatever CORS rule you pick.
+If a setting makes llama-server refuse to start, the Server log's first line shows the command: set that option back to
+Default (a newer option can need a newer llama.cpp build) or press Reset.
+Files: llama-manager.js (settings list + command line), cors-proxy.js (new), js/llama-local.js, index.html,
+css/llama-settings.css (new), main.js and project-preload.js (one line each for the command preview).
+Tests: npm test (new tests cover the flags, the addresses, CORS, the API key and the shutdown).
+
+Daily facts: click the fact (or "Tell me more"). The AI explains it and the answer ends with a Wikipedia link/card for it; if
+the model forgets, the app adds the link itself. (css/daily-fact.css, js/app.js)
+
+Apps and tools on every model: the instructions that tell the AI how to open apps are now stated as one rule for all models
+("your reply MUST contain the [[app: id]] tag", with an example), and when the model runs on llama.cpp all instruction
+messages are sent as ONE system message. Many models' chat templates (Qwen, Gemma, Mistral, Llama...) ignore or reject several
+system messages, which is why a local model could skip the app tags that LM Studio's models followed. LM Studio and Ollama
+are sent exactly what they were sent before.
+
+
+GET MODELS FROM HUGGING FACE (v28)
+----------------------------------
+Settings > Local model > "Get models from Hugging Face..." (also "Get models..." in the first-run guide).
+  * Starter list: Fast / Balanced / Smart picks, each with a "fits this PC" badge. Or search GGUF models (sort by downloads,
+    likes, newest, trending, updated; filters for size, vision, tool use, coding, language), or paste a Hugging Face link
+    or user/repo (also hf.co/user/repo:Q4_K_M) to jump straight to a model.
+  * Model page: author, licence, size, downloads, last updated, gated flag, README tab, and every file by quantization with
+    its size and a badge: Fits on GPU / Partly on GPU / CPU only / Too big (from your detected graphics memory and RAM).
+    Split models are one row and download all parts together; vision models can include the mmproj file.
+  * Downloads: progress, speed, time left, pause / resume / cancel / retry; queue (1 or 2 at once); writes name.gguf.part and
+    renames only when complete; resumes after closing the app; checks free disk space first; verifies SHA-256; notification
+    when done. Files go to <models folder>\<author>\<repo>\.
+  * Hub settings: access token for gated/private models (accept the licence on huggingface.co first; stored with Electron
+    safeStorage, never plain text), mirror address, proxy, speed limit, graphics-memory override.
+New files: hf-manager.js, js/hf-hub.js, css/hf-hub.css, tests/hf-manager.test.js. Small hooks in main.js, project-preload.js, index.html.
+Nothing existing was changed. Tests: npm test
+
+
+CHAT ACTIONS, SPEED AND CONTEXT (v29)
+-------------------------------------
+Under every AI reply: Copy, ↻ Regenerate (writes it again; the old reply is kept and "‹ 2/3 ›" arrows flip between versions),
+Continue (keeps writing from where the reply stopped, added to the same reply) and 🗑 Delete. Hover one of your own messages:
+✎ Edit (change it and "Save & resend": the chat after it is replaced by the new answer) and 🗑 Delete (removes it and its reply).
+Stop is still the square button while a reply is being written.
+Under each reply: "⚡ 42.5 tok/s · first token 0.8 s · 312 tokens" (a ~ means estimated because the server gave no exact numbers).
+Above the message box: "Context 63% full · 5,160 of 8,192 tokens". From 80% it offers "Summarize older messages" (older messages become
+short notes, nothing is deleted) and "New chat". The existing automatic summarizing still works too.
+Changed: js/app.js (small additions), new css/chat-tools.css, index.html (one line).
+
+v30 - TOOLS (MCP)
+- Settings > Tools: turn on "Let the AI use tools", add a server (Files / Memory / Web fetch buttons, a command, a URL, or paste an "mcpServers" JSON config).
+- When the model asks for a tool, a card appears in the chat: Allow / Always allow this tool / Deny. "Ask me before each tool runs" is on by default.
+- The model must support tool calling (llama-server runs with --jinja for this). If the model or server rejects tools, chat falls back to a normal answer and the stats line says so.
+- Up to 8 tool steps in a row, then it stops and waits for you.
+- npx servers need Node.js installed; uvx servers need uv. Tool servers run programs on your PC: add only ones you trust.
+- Not done yet from the roadmap: thinking blocks, per-chat model/system prompt, folders/search/pin/export, JSON-schema output, compare, document chat, audio input.
+
+v31 - THINKING BLOCKS + PER-CHAT SETTINGS
+- Reasoning models: their thinking shows in a collapsed "Thought process" block above the answer (works for both the server's reasoning field and inline <think> tags). Settings > Behavior > "Thinking models" can hide it. Earlier thinking is not sent back to the model, which saves context.
+- "⚙ This chat" (top bar): a model and extra instructions for the current chat only. They are added to your normal Settings. The button is outlined when a chat has its own.
+- Still not done: folders/search/pin/export, JSON-schema output, compare, document chat, audio input.
+
+v32 - CHAT LIST: SEARCH, PIN, RENAME, FOLDERS, EXPORT / IMPORT
+- History panel: search box (finds words inside messages too, with a snippet), "＋ Folder", Import, Export all.
+- Each chat has a ⋯ menu: Pin to top, Rename, Move to folder (or New folder…), Export as Markdown, Export as JSON.
+- Folders can be renamed (✎) or deleted (✕); deleting a folder keeps its chats.
+- Import takes .json (from Export) or .md (the Markdown export). Only text, roles and the basic fields are imported.
+- Still not done: JSON-schema output, side-by-side compare, document chat (RAG), audio input.
+
+v33 - JSON / SCHEMA REPLY FORMAT
+- "⚙ This chat" > Reply format: Normal text, Any valid JSON, or JSON that matches your own JSON Schema. The server forces replies into that shape (llama.cpp grammar), and JSON replies are shown pretty-printed.
+- An invalid schema is refused when you press Save. Tools are off in a chat that has a reply format. If the server rejects the format, chat answers normally and the stats line says so.
+- Still not done: side-by-side compare, document chat (RAG), audio input.
+
+v34 - COMPARE
+- Top bar "⇄ Compare": type one question, pick a model (and temperature) for each side, "Run both". Both answers stream at once with tokens/sec and time to first token. "Use this answer" puts the question and that answer into your chat.
+- Optional "Include this chat as background". With the built-in local model only one model is loaded, so compare temperatures or run once per model; LM Studio / Ollama can compare two models directly.
+- Still not done: document chat (RAG), audio input.
+
+v35 - DOCUMENT CHAT (RAG)
+- Top bar "📚 Documents": add PDFs, Word, spreadsheets, text files to the current chat (a new chat is started if none is open). They are split into passages and indexed on this computer (IndexedDB), never uploaded anywhere except as the few excerpts sent to your model with each question.
+- For each question the best 5 passages are found and given to the model as numbered excerpts; the reply gets a "📚 Sources" box listing them, with the ones the model cited as [1], [2] marked.
+- Search is by keywords (BM25) always. If you type an embedding model name (LM Studio / Ollama with an embedding model loaded) BEFORE adding documents, passages are also ranked by meaning and the two rankings are combined. If the server cannot embed, it quietly falls back to keywords. The built-in local model cannot embed.
+- "Use these documents when answering" switches it off per chat. Removing a document or deleting the chat deletes its index. A "Search" box in the dialog lets you test what would be found.
+- Scanned PDFs (no text layer) are not supported here; attach those with the paperclip so a vision model can look at the pages.
+- Still not done: audio input.
+
+v36 - AUDIO INPUT
+- Attach a sound file (mp3, wav, m4a, ogg, flac, webm...) with the + button, or press the 🎙 button next to it to record a clip (press again to stop). The clip is converted on this computer to 16 kHz mono WAV and sent to the model as an audio part; you can play it back in the chat.
+- Needs an AUDIO-CAPABLE model plus its mmproj file in the same folder (for example Qwen2-Audio, Voxtral, Ultravox, Qwen2.5-Omni). The Hugging Face hub's "vision" checkbox downloads that mmproj file too. The app asks llama-server what it can do: if the loaded model cannot hear, attaching is refused with a plain message. With LM Studio / Ollama it just tries.
+- Limits: 5 minutes per clip; many audio models only listen to the first 30 seconds (the chip warns). Audio from earlier messages is not re-sent, which saves context.
+- Ordinary models cannot hear audio; for dictation into the message box keep using the Voice settings (Whisper).
+- This completes the roadmap list.
+
+v37 - CHECKED IN THE REAL APP
+- Launched the actual Electron app (v39) and drove it: all new screens appear, the hardware check and "will it fit" badges work, a real Memory MCP server (npx) was started from the app and a full tool round (ask > Allow > result > follow-up with a thinking block) completed, documents chat found and cited a passage using the real IndexedDB, and a stereo 44.1 kHz WAV was converted by the real browser audio code and attached.
+- Not possible to check from the build machine: live Hugging Face search/download (no internet there) and a real audio-capable llama.cpp model. If a Hugging Face search ever shows blanks for downloads/likes, tell me what the "Debug log" says.
+- Small fixes: "Continue" no longer shows on a reply that only called a tool; buttons in the new dialogs now match the app's style.
+
+v38 - LIVE CHAT: WAKE WORD + SPEAK OVER IT
+- Settings > Voice > Live chat. Wake word is ON and set to "computer" (change it to any word or short phrase). Press Live chat: it waits ("Waiting for “computer”…"). Say "computer", then talk normally (you can say it in one breath: "Computer, what's the capital of France?"). A soft sound confirms it heard you.
+- It then works like a conversation: it answers out loud, listens again, and you do NOT need the wake word for the next turns. After the quiet time you set (default 30 s), or if you say "goodbye" / "that's all" / "stop listening", it goes back to waiting for the wake word. Tap the orb at any time to talk without the wake word.
+- Speak over it: while it is thinking or talking, start speaking and it stops and listens to you. Sensitivity Low / Normal / High. Headphones work best; with speakers raise the bar (Low) if it interrupts itself, or turn "Let me interrupt" off. Tapping the orb to interrupt still works.
+- Turn "Wait for a wake word" off and live chat behaves exactly as before (listens straight away). Nothing else in voice or dictation changed.
+- Notes: the wake word is recognized by the same offline Whisper speech engine, so it is as accurate as your dictation and does not send audio anywhere; it hears one letter off ("computers") but not unrelated words. A first sentence of a turn can be cut slightly when you interrupt; just keep talking.
+
+
+HANDS-FREE VOICE COMMANDS (Live chat)
+Say the wake word first ("computer ..."), unless you are already in a conversation. Only a whole short phrase counts as a command.
+- Its voice:   "volume up / down", "volume 50", "mute", "unmute", "speak faster", "speak slower", "normal speed"
+- Replies:     "say that again" / "repeat that", "try again" / "regenerate", "new chat" / "start over"
+- Tabs:        "new tab", "reload this page", "go back", "go forward", "next tab", "close tab 3", "close the 3rd tab", "close all other tabs" (it asks yes or no first)
+- Page:        "scroll down", "scroll up", "top of the page", "bottom of the page", "read this page" / "summarize this tab"
+- Windows:     "open settings", "show chat history", "go to the chat tab"
+- Stopping:    "stop", "halt", "that's enough" (interrupts) - "goodbye", "pause listening", "go to sleep" (back to waiting for the wake word) - "end live" / "stop live" (leave Live chat)
+- Staying on:  "keep listening" turns off the silence timeout until Live chat ends. Settings > Voice has the timeout (default 5 minutes, 0 = never) and a voice volume slider.
+
+
+PASSWORD MANAGER (new)
+----------------------
+Click the key button next to the star in the toolbar (or Tools menu > Passwords, or Ctrl+Shift+K).
+  * First use: choose a master password. All saved logins are encrypted with it (AES-256-GCM, key from scrypt) in the file
+    icywhite-vault.json inside the app's data folder. The master password is never stored: if you forget it the logins
+    cannot be recovered (the Passwords window offers "Forgot it?" to start a new empty vault; the old file is kept, renamed).
+  * Saving: sign in to a website and a bar under the toolbar asks "Save the password for ...?"  (Save / Not now / Never for this
+    site). If the password changed for a saved user it offers "Update". Nothing is offered in InPrivate windows or when the
+    login failed.
+  * Filling: click a user name or password field on a login page and a small menu offers your saved logins for THAT site
+    (the same address only; "www." is ignored; https logins are never offered on http pages). One click fills it - nothing
+    is filled without a click unless you turn on "Fill a login as soon as a page loads" in the password settings.
+    On sign-up forms the menu offers "Suggest a strong password".
+  * The key button shows a green dot when a saved login is available for the open tab, an amber dot when the vault is locked.
+  * The vault locks itself after 15 minutes (changeable), with "Lock now", and when IcyWhite closes.
+  * Import / export CSV (Chrome, Edge, Firefox, Bitwarden, 1Password). Exports are NOT encrypted; delete them after use.
+  * Your existing chats, settings, logins to websites (cookies) and everything else are untouched; this feature only adds files.
+  Limits: login forms inside iframes are not detected; two-step logins (user name page, then password page) fill the password only.
+Files: password-manager.js (vault), js/passwords-ui.js + css/passwords.css (window and save bar), the page-side code at the end
+of project-preload.js, and small hooks in main.js, preload.js and browser.html. Tests: npm test (tests/password-manager.test.js).
+
+
+HANDS-FREE VOICE COMMANDS (new)
+-------------------------------
+Start Live chat (waveform button) and talk. Say "what can I say" to see the full list on screen, or open
+VOICE-COMMANDS.md. Examples: "Computer, new chat" / "dark mode" / "turn on web search" / "open the chat about taxes" /
+"open settings" / "allow" / "apply the changes" / "run the command" (asks yes or no first) / "volume up" / "next tab".

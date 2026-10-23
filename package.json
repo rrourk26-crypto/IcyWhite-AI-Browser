@@ -1,23 +1,26 @@
 {
-  "name": "oasis-browser",
-  "version": "1.0.0",
-  "description": "Oasis Browser - Electron browser with Home, Media, tabs and AI control",
+  "name": "icywhite-browser",
+  "version": "2.0.0",
+  "description": "IcyWhite - Electron browser with Home, Media, tabs, AI control, LM Studio, Ollama and built-in llama.cpp local models",
   "main": "main.js",
-  "author": "Oasis",
+  "author": "IcyWhite",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder",
-    "build:win": "electron-builder --win",
-    "build:portable": "electron-builder --win portable"
+    "test": "node --test \"tests/*.test.js\"",
+    "prepare:llama": "node scripts/prepare-llama.js",
+    "build": "npm run prepare:llama && electron-builder",
+    "build:win": "npm run prepare:llama && electron-builder --win nsis",
+    "build:portable": "npm run prepare:llama && electron-builder --win portable",
+    "build:dir": "npm run prepare:llama && electron-builder --win dir"
   },
   "devDependencies": {
     "electron": "^39.0.0",
     "electron-builder": "^26.15.3"
   },
   "build": {
-    "appId": "com.oasis.browser",
-    "productName": "Oasis Browser",
+    "appId": "com.icywhite.browser",
+    "productName": "IcyWhite",
     "asar": true,
     "directories": {
       "output": "dist"
@@ -25,7 +28,17 @@
     "files": [
       "**/*",
       "!dist{,/**/*}",
-      "!*.log"
+      "!*.log",
+      "!*.dll",
+      "!llama-server*",
+      "!llama{,/**/*}",
+      "!runtimes{,/**/*}",
+      "!models{,/**/*}",
+      "!llama.cpp-GPU-NVIDIA CUDA{,/**/*}",
+      "!scripts{,/**/*}",
+      "!tests{,/**/*}",
+      "!index1.html",
+      "!build-log.txt"
     ],
     "win": {
       "icon": "icon.ico",
@@ -48,7 +61,28 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "artifactName": "IcyWhite-Setup-${version}.${ext}"
+    },
+    "extraResources": [
+      {
+        "from": "llama",
+        "to": "llama"
+      },
+      {
+        "from": "runtimes",
+        "to": "runtimes",
+        "filter": [
+          "**/*",
+          "!**/models/**",
+          "!**/*.gguf",
+          "!**/*.bat",
+          "!**/*.txt"
+        ]
+      }
+    ],
+    "portable": {
+      "artifactName": "IcyWhite-Portable-${version}.${ext}"
     }
   }
 }

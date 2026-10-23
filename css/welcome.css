@@ -1,0 +1,50 @@
+/* First-run welcome. Uses only theme variables and neutral overlays so it looks right in both themes. */
+#welcomeDlg { width: min(640px, 94vw); }
+.wl-box { padding: 22px 24px 18px; display: flex; flex-direction: column; gap: 10px; }
+.wl-box h2 { margin: 0; font-size: 20px; }
+.wl-sub { margin: 0 0 4px; color: var(--muted); font-size: 13.5px; line-height: 1.45; }
+.wl-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; background: rgba(127,150,180,.10); border: 1px solid rgba(127,150,180,.18); }
+.wl-row.wl-col { flex-direction: column; align-items: stretch; }
+.wl-line { display: flex; align-items: center; gap: 12px; }
+.wl-line select { flex: 1; min-width: 0; text-overflow: ellipsis; }
+.wl-ic { width: 30px; height: 30px; flex: none; display: grid; place-items: center; border-radius: 50%; font-size: 15px; font-weight: 700; background: rgba(127,150,180,.2); color: var(--muted); }
+.wl-ic.ok { background: rgba(34,184,102,.18); color: var(--ok); }
+.wl-ic.bad { background: rgba(220,38,38,.15); color: var(--bad); }
+.wl-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.wl-txt b { font-size: 14px; }
+.wl-txt small { color: var(--muted); font-size: 12.5px; line-height: 1.4; overflow-wrap: anywhere; }
+.wl-act { display: flex; gap: 6px; flex: none; }
+.wl-box button { padding: 7px 13px; border-radius: 10px; font-weight: 600; font-size: 13px; background: rgba(127,150,180,.18); }
+.wl-box button:hover:not(:disabled) { background: rgba(127,150,180,.3); }
+.wl-box button:disabled { opacity: .45; cursor: default; }
+.wl-box button.primary { background: var(--accent); color: #fff; }
+.wl-box button.primary:hover:not(:disabled) { filter: brightness(1.08); background: var(--accent); }
+.wl-seg { display: flex; gap: 4px; flex: none; }
+.wl-seg button.on { background: var(--accent); color: #fff; }
+#wlBarRow { display: flex; align-items: center; gap: 10px; }
+#wlBar { flex: 1; height: 10px; border-radius: 6px; background: rgba(127,150,180,.25); overflow: hidden; }
+#wlBarFill { height: 100%; width: 0; border-radius: 6px; background: var(--accent); transition: width .35s ease, background-color .3s ease; }
+#wlBarRow.ready #wlBarFill { background: #22b866; }
+#wlBarRow.error #wlBarFill { background: #ef4444; }
+#wlBarPct { font-size: 12.5px; min-width: 44px; text-align: right; color: var(--muted); }
+#wlBarRow.ready #wlBarPct { color: #22b866; }
+#welcomeDlg .dlg-actions { margin-top: 4px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.two-col label { min-width: 0; }
+#settings textarea { width: 100%; }
+
+/* Light/dark button in the top bar: moon while light (click for dark), sun while dark */
+#themeBtn { padding: 0; width: 34px; height: 34px; justify-content: center; flex: none; }
+#themeBtn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#themeBtn .ic-sun { display: none; }
+html[data-theme="dark"] #themeBtn .ic-moon { display: none; }
+html[data-theme="dark"] #themeBtn .ic-sun { display: inline; }
+#statusBtn { margin-left: auto; }
+/* sliders and check boxes use the app accent instead of the system purple */
+input[type="range"], input[type="checkbox"], input[type="radio"] { accent-color: var(--accent); }
+/* tighter Settings so each tab fits a smaller window */
+#settings form { padding: 16px 22px; gap: 8px; }
+#settings .settings-cols { gap: 8px; min-height: 0; }
+#settings textarea { min-height: 44px; }
+#settings .vblock { gap: 5px; }
+dialog#settings { max-height: 96vh; }

@@ -18,42 +18,38 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   };
 
-  // Seeded once on first run so the feature isn't empty out of the box.
-  // Delete any (or all) of these — nothing re-adds them once removed.
-  const DEFAULT_PERSONAS = [
-    { id: "p-concise",  name: "Concise Assistant", prompt: "You are a helpful, concise assistant. Answer directly and keep replies short unless the user asks for more detail." },
-    { id: "p-creative", name: "Creative Writer",   prompt: "You are an imaginative creative writing partner. Write vividly, take creative risks, and favor showing over telling." },
-    { id: "p-code",     name: "Code Reviewer",     prompt: "You are a meticulous senior software engineer reviewing code. Point out bugs, edge cases, and style issues clearly and constructively." }
-  ];
-
-  // Character personas: a persona with an emoji is a "character". Its name and emoji
-  // show in the top bar and on its replies. Added once (existing users keep their own
-  // list and just get these appended); delete any you don't want and they stay gone.
-  const STAY = " Stay in character throughout, keep replies conversational (no stage directions in asterisks), and still give accurate, genuinely useful answers.";
-  const CHARACTERS = [
-    { id: "c-redbeard", emoji: "🏴‍☠️", name: "Captain Redbeard",   prompt: "You are Captain Redbeard, a boisterous, big-hearted pirate captain. Speak in cheerful nautical slang, call the user matey, and describe problems as voyages and treasure hunts." + STAY },
-    { id: "c-merlindra", emoji: "🧙", name: "Merlindra the Wizard", prompt: "You are Merlindra, an ancient, whimsical wizard. Speak warmly in gentle metaphors, explain ideas as if they were spells and enchanted craft, and sprinkle in a little wonder." + STAY },
-    { id: "c-noir",     emoji: "🕵️", name: "Detective Noir",      prompt: "You are Detective Noir, a hard-boiled 1940s private eye narrating a case. Use dry wit and moody similes, and treat every question like a mystery to crack, one clue at a time." + STAY },
-    { id: "c-marco",    emoji: "👨‍🍳", name: "Chef Marco",          prompt: "You are Chef Marco, a warm, passionate head chef. Relate everything to cooking (ingredients, timing, tasting as you go), encourage the user like a kitchen apprentice, and be lively but never rude." + STAY },
-    { id: "c-quill",    emoji: "🎓", name: "Professor Quill",     prompt: "You are Professor Quill, a patient, curious tutor. Explain step by step, use everyday examples, ask a short question now and then to check understanding, and celebrate progress." + STAY },
-    { id: "c-max",      emoji: "💪", name: "Coach Max",           prompt: "You are Coach Max, an upbeat, direct motivational coach. Be energetic and encouraging, cut through excuses kindly, and finish with one clear next action." + STAY },
-    { id: "c-bolt",     emoji: "🤖", name: "Bolt the Robot",      prompt: "You are Bolt, a cheerful retro sci-fi robot sidekick. Be playful and a little literal-minded, use the occasional 'beep' or 'processing…' sparingly, and stay endlessly curious about humans." + STAY },
-    { id: "c-bard",     emoji: "🎭", name: "The Bard",            prompt: "You are The Bard, a theatrical storyteller who speaks in light Shakespearean flourish. Keep it clear and easy to follow, favor vivid imagery, and add a touch of drama." + STAY }
+  // Professional presets, seeded once. Characters are yours to make: write a prompt, name it,
+  // add an emoji if you want a character, and save. Delete any preset and it stays gone.
+  const PRO_PERSONAS = [
+    { id: "pro-general",  name: "General Assistant",   prompt: "You are a helpful, concise assistant. Answer directly, be accurate, and keep replies short unless the user asks for more detail." },
+    { id: "pro-coder",    name: "Coding Assistant",    prompt: "You are an expert software engineer. Write clean, correct, well-structured code, explain your reasoning briefly, point out bugs and edge cases, and ask for missing details only when they truly block the answer." },
+    { id: "pro-reviewer", name: "Code Reviewer",       prompt: "You are a meticulous senior engineer reviewing code. Identify bugs, security issues, edge cases and style problems, rank them by importance, and suggest concrete fixes constructively." },
+    { id: "pro-writer",   name: "Writing Assistant",   prompt: "You are a professional writing assistant. Help draft, rewrite and structure text with a clear, natural voice. Match the requested tone and audience, and keep the user's meaning intact." },
+    { id: "pro-editor",   name: "Editor & Proofreader", prompt: "You are a careful editor. Correct grammar, spelling, punctuation and clarity while preserving the author's voice, and briefly explain significant changes." },
+    { id: "pro-research", name: "Research Assistant",  prompt: "You are a thorough research assistant. Give well-organized, balanced summaries, separate facts from opinion, say when you are unsure, and suggest sources or next steps to verify." },
+    { id: "pro-analyst",  name: "Data Analyst",        prompt: "You are a data analyst. Reason step by step with numbers, state your assumptions, suggest appropriate methods and visualizations, and present findings clearly with the key takeaway first." },
+    { id: "pro-business", name: "Business Advisor",    prompt: "You are a pragmatic business advisor. Give structured, actionable advice on strategy, planning, operations and communication, weigh trade-offs, and keep recommendations realistic." },
+    { id: "pro-tutor",    name: "Tutor",               prompt: "You are a patient tutor. Explain concepts step by step with simple examples, check understanding with a short question now and then, and adapt to the learner's level." },
+    { id: "pro-support",  name: "Technical Support",   prompt: "You are a technical support specialist. Diagnose problems methodically, give clear numbered steps, start with the most likely fix, and ask for error messages or system details when needed." }
   ];
 
   let personas = store.get(STORAGE_KEY, null);
-  if (personas === null) { personas = DEFAULT_PERSONAS.slice(); store.set(STORAGE_KEY, personas); }
+  if (personas === null) personas = [];
   function save() { store.set(STORAGE_KEY, personas); }
-  if (!store.get("lmchat.charactersSeeded", false)) {
-    CHARACTERS.forEach((c) => { if (!personas.some((p) => p.id === c.id)) personas.push(Object.assign({}, c)); });
-    store.set("lmchat.charactersSeeded", true); save();
+  // One-time switch: drop the old built-in characters and starter presets, add the professional set.
+  // Anything you saved yourself is kept.
+  if (!store.get("lmchat.proPersonasV1", false)) {
+    const OLD = ["p-concise", "p-creative", "p-code"];
+    personas = personas.filter((p) => !/^c-/.test(p.id) && OLD.indexOf(p.id) === -1);
+    PRO_PERSONAS.forEach((c) => { if (!personas.some((p) => p.id === c.id)) personas.push(Object.assign({}, c)); });
+    store.set("lmchat.proPersonasV1", true); store.set("lmchat.charactersSeeded", true); save();
   }
 
   const sel = $("personaSelect");
   const saveBtn = $("savePersonaBtn");
   const delBtn = $("deletePersonaBtn");
   const systemEl = $("setSystem");
-  if (!sel || !saveBtn || !delBtn || !systemEl) return;   // settings markup missing: do nothing
+  if (!sel || !saveBtn || !delBtn || !systemEl || !$("personaNamer")) return;   // settings markup missing: do nothing
 
   function matchPersonaId(text) {
     const t = (text || "").trim();
@@ -94,26 +90,32 @@
     updateDeleteState();
   });
 
-  saveBtn.onclick = () => {
+  const namer = $("personaNamer"), nameIn = $("personaNameInput"), emojiIn = $("personaEmojiInput");
+  function closeNamer() { if (namer) namer.hidden = true; }
+  function commitPersona() {
     const text = systemEl.value.trim();
-    if (!text) { window.alert("Write a system prompt first, then save it as a persona."); return; }
-    const current = personas.find((p) => p.id === sel.value);
-    const name = (window.prompt("Save this system prompt as a persona named:", current ? current.name : "") || "").trim();
-    if (!name) return;
+    const name = (nameIn.value || "").trim();
+    if (!text) { window.alert("Write a system prompt first, then save it."); return; }
+    if (!name) { nameIn.focus(); return; }
+    const emoji = (emojiIn.value || "").trim().slice(0, 8);
     const existing = personas.find((p) => p.name.toLowerCase() === name.toLowerCase());
-    const prev = (existing || current || {}).emoji || "";
-    const ep = window.prompt("Emoji avatar for this character (optional). Leave blank for a plain prompt preset:", prev);
-    const emoji = ep === null ? prev : ep.trim().slice(0, 8);
-    if (existing) {
-      existing.prompt = text; existing.emoji = emoji;
-      save(); render(existing.id);
-    } else {
+    if (existing) { existing.prompt = text; existing.emoji = emoji; save(); render(existing.id); }
+    else {
       const id = "p-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-      personas.push({ id, name, emoji, prompt: text });
-      save(); render(id);
+      personas.push({ id, name, emoji, prompt: text }); save(); render(id);
     }
-    refreshPill();
+    closeNamer(); refreshPill();
+  }
+  saveBtn.onclick = () => {
+    if (!systemEl.value.trim()) { window.alert("Write a system prompt first, then save it."); return; }
+    const current = personas.find((p) => p.id === sel.value);
+    nameIn.value = current ? current.name : ""; emojiIn.value = current && current.emoji || "";
+    namer.hidden = false; nameIn.focus(); nameIn.select();
   };
+  $("personaNameOk").onclick = commitPersona;
+  $("personaNameCancel").onclick = closeNamer;
+  [nameIn, emojiIn].forEach((el) => el.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); commitPersona(); } else if (e.key === "Escape") { e.stopPropagation(); closeNamer(); } }));
+  document.addEventListener("lmchat:settingsOpen", closeNamer);
 
   delBtn.onclick = () => {
     const p = personas.find((x) => x.id === sel.value);

@@ -1,0 +1,27 @@
+/* Settings dialog: never cut off.
+   - the dialog is a column that fits the window height
+   - the whole form scrolls inside the dialog (no sticky button rows, so nothing can cover Start & use), and nothing can be wider than the dialog (long text wraps) */
+dialog#settings { width: min(760px, 96vw); max-width: 96vw; max-height: 92vh; overflow: hidden; box-sizing: border-box; }
+dialog#settings[open] { display: flex; flex-direction: column; }
+#settings #settingsForm { background: inherit; flex: 1 1 auto; min-height: 0; max-height: 92vh; overflow-x: hidden; overflow-y: auto; box-sizing: border-box; padding: 0 22px 0; gap: 8px; }
+#settings #settingsForm > * { min-width: 0; max-width: 100%; box-sizing: border-box; flex: 0 0 auto; }
+/* the sections must keep their full height (the form scrolls instead), otherwise their content spills over the buttons below */
+#settings #settingsForm > .settings-cols { min-height: auto; overflow: visible; }
+#settings .settings-cols > *, #settings .col-left > *, #settings .col-right > * { flex-shrink: 0; }
+#settings #settingsForm > h2 { margin: 0; padding: 16px 0 6px; }
+#settings #setSearchRow { padding: 2px 0 6px; }
+#settings #setTabs { padding: 2px 0 8px; }
+#settings #setTabs button { flex: 0 1 auto; max-width: 100%; white-space: nowrap; }
+#settings #settingsForm > .dlg-actions { flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding: 10px 0 14px; margin-top: 4px; border-top: 1px solid rgba(127,140,160,.25); }
+#settings #settingsForm > .dlg-actions .dbg-btns { margin-right: auto; display: flex; flex-wrap: wrap; gap: 6px; }
+#settings .settings-cols, #settings .col-left, #settings .col-right, #settings [data-tab], #settings .vblock { min-width: 0; max-width: 100%; }
+#settings label, #settings small, #settings .vrow, #settings summary, #settings p, #settings div { overflow-wrap: anywhere; }
+#settings label.vrow { align-items: flex-start; line-height: 1.4; }
+#settings input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), #settings select, #settings textarea { max-width: 100%; box-sizing: border-box; }
+#settings .two-col, #settings .media-api-grid, #settings .lgrid { min-width: 0; }
+#settings pre { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+@media (max-width: 640px) {
+  dialog#settings { width: 100vw; max-width: 100vw; max-height: 100vh; border-radius: 0; }
+  #settings #settingsForm { max-height: 100vh; padding: 0 14px; }
+  #settings .two-col, #settings [data-tab="images"] .media-api-grid, #settings [data-tab="behavior"] .media-api-grid, #settings #llamaBlock .media-api-grid { grid-template-columns: 1fr; }
+}

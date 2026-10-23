@@ -3,8 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Oasis AI Workspace</title>
-<link rel="stylesheet" href="css/style.css">
+<title>IcyWhite</title>
+<script>(function(){var t="light";try{t=localStorage.getItem("icywhite.theme")||"light"}catch(e){}
+var d=t==="dark"||(t==="system"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches);
+document.documentElement.setAttribute("data-theme",d?"dark":"light");
+document.write('<link id="themeCss" rel="stylesheet" href="css/style'+(d?'-dark':'')+'.css">');})();</script>
+<link rel="stylesheet" href="css/welcome.css">
+<link rel="stylesheet" href="css/llama-settings.css">
+<link rel="stylesheet" href="css/llama-modern.css">
+<link rel="stylesheet" href="css/llama-multi.css">
+<link rel="stylesheet" href="css/settings-search.css">
+<link rel="stylesheet" href="css/web-sources.css">
+<link rel="stylesheet" href="css/hf-hub.css">
+<link rel="stylesheet" href="css/chat-tools.css">
+<link rel="stylesheet" href="css/daily-fact.css">
+<link rel="stylesheet" href="css/theme-colors.css">
+<link rel="stylesheet" href="css/settings-fit.css">
+<link rel="stylesheet" href="css/voice-help.css">
 </head>
 <body>
 <div class="shell">
@@ -30,6 +45,10 @@
     <div id="wall" aria-hidden="true"></div>
     <div class="topbar">
       <button class="pill-btn" id="statusBtn" title="Connection settings"><span class="dot" id="statusDot"></span><span id="statusText">Checking LM Studio…</span></button>
+      <button class="pill-btn" id="themeBtn" type="button" title="Switch between light and dark" aria-label="Switch between light and dark theme">
+        <svg class="ic-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+        <svg class="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>
+      </button>
     </div>
 
     <aside id="history" aria-label="Chat history">
@@ -99,7 +118,7 @@
       </article>
       <article class="card fact">
         <div class="card-head"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>Daily facts</div>
-        <h3 id="factText"></h3>
+        <h3 id="factText" role="button" tabindex="0" title="Click to hear more about this fact, with a link"></h3>
         <button class="btn push" id="factMore">Tell me more</button>
       </article>
       <article class="card">
@@ -117,18 +136,51 @@
 <dialog id="settings">
   <form method="dialog" id="settingsForm">
     <h2>Settings</h2>
+    <div id="setSearchRow"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="setSearch" type="search" placeholder="Search settings (for example: port, context, temperature)" autocomplete="off" spellcheck="false" aria-label="Search settings"></div>
+    <div id="setSearchEmpty" hidden>No setting matches that. Try another word.</div>
+    <div id="setTabs" role="tablist" aria-label="Settings sections">
+      <button type="button" role="tab" data-go="general">General</button>
+      <button type="button" role="tab" data-go="connection">Connection</button>
+      <button type="button" role="tab" data-go="local" id="localTab" hidden>Local model</button>
+      <button type="button" role="tab" data-go="behavior">Behavior</button>
+      <button type="button" role="tab" data-go="images">Images &amp; search</button>
+      <button type="button" role="tab" data-go="voice">Voice</button>
+      <button type="button" role="tab" data-go="tools" hidden>Tools</button>
+    </div>
     <div class="settings-cols">
       <div class="col-left">
-        <label>Your name
-          <input id="setName" autocomplete="off">
-        </label>
-        <label>LM Studio server address
+        <div class="two-col" data-tab="general">
+          <label>Your name
+            <input id="setName" autocomplete="off">
+          </label>
+          <label>Appearance
+            <select id="setTheme"><option value="light">Light (IcyWhite)</option><option value="dark">Dark</option><option value="system">Match my system</option></select>
+          </label>
+        </div>
+        <div class="vblock" id="themeColors" data-tab="general">
+          <div class="tc-head"><b>Look: theme colors</b><small>Editing the <b id="tcMode">Light</b> theme. Switch light/dark to set the other one.</small></div>
+          <div id="tcPresets" class="tc-presets" role="group" aria-label="Color themes"></div>
+          <div class="tc-grid">
+            <div class="tc-row"><span>Text</span><input type="color" data-tc="text" aria-label="Text color"><button type="button" data-tc-reset="text" title="Back to the original">↺</button></div>
+            <div class="tc-row"><span>Left toolbar</span><input type="color" data-tc="rail" aria-label="Left toolbar color"><button type="button" data-tc-reset="rail" title="Back to the original">↺</button></div>
+            <div class="tc-row"><span>Browser bar (tabs &amp; address)</span><input type="color" data-tc="browser" aria-label="Browser bar color"><button type="button" data-tc-reset="browser" title="Back to the original">↺</button></div>
+            <div class="tc-row"><span>Buttons &amp; highlights</span><input type="color" data-tc="accent" aria-label="Accent color"><button type="button" data-tc-reset="accent" title="Back to the original">↺</button></div>
+          </div>
+          <div class="dlg-actions" style="justify-content:flex-start"><button type="button" data-tc-reset="all">Reset all colors</button></div>
+        </div>
+        <label data-tab="connection">Server address (LM Studio, Ollama or a local model)
           <input id="setUrl" autocomplete="off" spellcheck="false" placeholder="http://localhost:1234/v1">
         </label>
-        <label>API key (leave blank unless you set one)
+        <div id="providerChips" data-tab="connection">
+          <span>Quick set:</span>
+          <button type="button" data-provider="lmstudio" title="http://127.0.0.1:1234/v1">LM Studio <small>:1234</small></button>
+          <button type="button" data-provider="ollama" title="http://127.0.0.1:11434/v1">Ollama <small>:11434</small></button>
+          <button type="button" data-provider="local" id="chipLocal" title="The built-in llama.cpp server, usually http://127.0.0.1:8080/v1" hidden>Local model <small>:8080</small></button>
+        </div>
+        <label data-tab="connection">API key (leave blank unless you set one)
           <input id="setKey" type="password" autocomplete="off">
         </label>
-        <div class="model-settings">
+        <div class="model-settings" data-tab="connection">
           <label>Model
             <div class="model-settings-row">
               <select id="setModel" title="Choose model" aria-label="Choose model"><option value="">Auto</option></select>
@@ -138,7 +190,109 @@
           <small>Select <b>Auto</b> to let LM Studio use its active/default model, or choose one of the models returned by the server.</small>
         </div>
 
-        <div class="vblock">
+        <div class="vblock" id="llamaBlock" data-tab="local" hidden>
+          <h3>Local model (llama.cpp)</h3>
+          <small>Run a .gguf model on this computer with the built-in llama.cpp server. LM Studio keeps working: use the buttons below to switch between them.</small>
+          <label>Model file
+            <div class="model-settings-row">
+              <select id="llamaModel" title="Choose a local .gguf model" aria-label="Choose a local model"><option value="">(none found)</option></select>
+              <button type="button" class="round" id="llamaRefresh" title="Rescan the models folder" aria-label="Rescan the models folder"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.5-4M4 5v3.5h3.5M4 13a8 8 0 0 0 14.5 4M20 19v-3.5h-3.5"/></svg></button>
+            </div>
+          </label>
+          <label>Runtime (the llama.cpp build that runs the model)
+            <div class="model-settings-row">
+              <select id="llamaRuntime" title="Auto picks the build that fits this PC: NVIDIA CUDA for an NVIDIA card, otherwise the CPU build" aria-label="Runtime"><option value="auto">Auto (recommended)</option></select>
+              <button type="button" class="round" id="llamaRuntimeRefresh" title="Look for runtimes and check this PC's graphics card again" aria-label="Look for runtimes again"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.5-4M4 5v3.5h3.5M4 13a8 8 0 0 0 14.5 4M20 19v-3.5h-3.5"/></svg></button>
+            </div>
+          </label>
+          <small id="llamaRuntimeInfo" style="white-space:pre-wrap"></small>
+          <div class="media-api-grid">
+            <label>Context size (tokens)<input id="llamaCtx" type="number" min="512" step="512" list="llamaCtxList" title="How much text the model can remember at once. Bigger needs more memory."></label>
+            <datalist id="llamaCtxList"><option value="2048"><option value="4096"><option value="8192"><option value="16384"><option value="32768"><option value="65536"><option value="131072"><option value="262144"></datalist>
+            <label>GPU layers (0 = CPU, 99 = all)<input id="llamaNgl" type="number" min="0" max="999"></label>
+            <label>Extra llama-server options (optional)<input id="llamaExtra" autocomplete="off" spellcheck="false" placeholder="e.g. -fa on --threads 8"></label>
+          </div>
+          <small id="llamaFit" class="lfit" hidden></small>
+          <label class="vrow"><input type="checkbox" id="llamaAuto" class="vchk"> Start this model automatically when IcyWhite opens</label>
+          <div class="dlg-actions" style="justify-content:flex-start;flex-wrap:wrap">
+            <button type="button" id="llamaStart" class="primary">Start &amp; use</button>
+            <button type="button" id="llamaStop">Stop</button>
+          </div>
+          <div class="dlg-actions" style="justify-content:flex-start;flex-wrap:wrap">
+            <button type="button" id="llamaPickDir">Models folder…</button>
+            <button type="button" id="llamaOpenDir">Open folder</button>
+            <button type="button" id="llamaOpenRuntimes" title="Open the runtimes folder (right-click to choose a different runtimes folder)">Runtimes</button>
+            <button type="button" id="hfOpen" class="primary" title="Search Hugging Face for GGUF models and download them into your models folder">Get models from Hugging Face…</button>
+            <button type="button" id="openWelcome">Setup guide…</button>
+          </div>
+          <small id="llamaStatusText"></small>
+          <div id="llamaBarRow" hidden><div id="llamaBar" role="progressbar" aria-label="Model loading" aria-valuemin="0" aria-valuemax="100"><div id="llamaBarFill"></div></div><span id="llamaBarPct"></span></div>
+          <div id="llamaAddr" hidden></div>
+
+          <div id="llamaMulti" class="lmulti">
+            <div class="lm-head">
+              <div><b>Models running</b> <span class="lm-total" id="lmTotal"></span></div>
+              <button type="button" id="lmStopAll" title="Stop every extra model (the main model keeps running)">Stop extras</button>
+            </div>
+            <div id="lmList"></div>
+            <div class="lm-add">
+              <select id="lmModel" title="Model to load next to the ones already running" aria-label="Model to add"><option value="">(no models found)</option></select>
+              <button type="button" id="lmAdd" class="primary">Add model</button>
+            </div>
+            <label class="lfield always lm-max">Most models at once
+              <input id="lmMax" type="number" min="1" max="9" value="3">
+              <small>Each model runs as its own server on its own port and uses its own memory. Several big models will not fit on one graphics card, so start small.</small>
+            </label>
+            <small id="lmMsg"></small>
+          </div>
+          <small id="llamaPending" hidden>Settings changed. Press <b>Start &amp; use</b> again to apply them to the running server.</small>
+
+          <details class="lset" id="lsNet">
+            <summary>Server &amp; network</summary>
+            <div class="lgrid">
+              <label class="lfield always">Serve on
+                <select id="llamaHostSel"><option value="127.0.0.1">This computer only (127.0.0.1)</option><option value="0.0.0.0">Local network (0.0.0.0)</option><option value="custom">One specific address…</option></select>
+                <small>Local network lets phones and other PCs on your Wi-Fi use this model. Anyone on the network can then use it unless you set an API key.</small>
+              </label>
+              <label class="lfield" id="llamaHostCustomRow" hidden>Address to listen on<input id="llamaHostCustom" autocomplete="off" spellcheck="false" placeholder="e.g. 192.168.1.20"></label>
+              <label class="lfield">Port<input id="llamaPort" type="number" min="1024" max="65535" placeholder="8080"><small>If the port is busy a free one is used and shown in the addresses above.</small></label>
+              <label class="lfield always">API key (optional)
+                <div class="model-settings-row"><input id="llamaKey" type="password" autocomplete="off" placeholder="none"><button type="button" id="llamaKeyGen" title="Make a random key">Generate</button><button type="button" id="llamaKeyShow" title="Show or hide the key">Show</button></div>
+                <small>Other computers must send it as <code>Authorization: Bearer &lt;key&gt;</code>. IcyWhite on this computer never needs it.</small>
+              </label>
+              <label class="lfield always">CORS (which websites may call the server)
+                <select id="llamaCors"><option value="all">All websites (*)</option><option value="origins">Only the websites listed below</option><option value="off">Nobody (no CORS headers)</option></select>
+                <small>IcyWhite itself always works whatever you pick here.</small>
+              </label>
+              <label class="lfield" id="llamaOriginsRow" hidden>Allowed websites (separate with spaces or commas)<input id="llamaOrigins" autocomplete="off" spellcheck="false" placeholder="http://localhost:3000 https://myapp.example.com"></label>
+              <div id="llamaNetInfo" class="lfield"></div>
+              <div class="lopts" data-lgroup="server"></div>
+            </div>
+          </details>
+          <details class="lset" id="lsPerf">
+            <summary>Performance &amp; memory</summary>
+            <div class="lgrid"><div class="lopts" data-lgroup="perf"></div></div>
+          </details>
+          <details class="lset" id="lsSamp">
+            <summary>Sampling defaults</summary>
+            <div class="lgrid"><div class="lopts" data-lgroup="sampling"></div></div>
+          </details>
+          <details class="lset" id="lsCmd">
+            <summary>Command line &amp; reset</summary>
+            <div class="lgrid">
+              <small>Exactly what will be run when you press Start &amp; use (the API key is kept out of it).</small>
+              <pre id="llamaCmd"></pre>
+              <div class="dlg-actions" style="justify-content:flex-start"><button type="button" id="llamaReset">Reset all server settings to defaults</button></div>
+            </div>
+          </details>
+          <details><summary>Server log</summary><div class="dlg-actions" style="justify-content:flex-start;align-items:center;flex-wrap:wrap"><button type="button" id="llamaOpenLogs">Open log folder</button><small>Also saved to a file, so it survives a restart (the 3 newest files, about 2 MB each).</small></div><pre id="llamaLog" style="max-height:180px;overflow:auto;font:11.5px/1.4 Consolas,monospace;white-space:pre-wrap;word-break:break-all;margin:6px 0 0"></pre></details>
+          <div id="llamaApplyBar" data-state="clean">
+            <span class="dot"></span><span id="llamaApplyMsg"></span>
+            <button type="button" id="llamaApply" class="primary" disabled>Apply changes</button>
+          </div>
+        </div>
+
+        <div class="vblock" data-tab="behavior">
           <h3>Autopilot &amp; initiative</h3>
           <label class="vrow"><input type="checkbox" id="setProactive" class="vchk"> Let the AI speak up on its own when I have been quiet (asks questions, comments, suggests next steps)</label>
           <div class="media-api-grid">
@@ -147,14 +301,29 @@
             <label>Autopilot: most steps before it pauses<input id="setApMaxSteps" type="number" min="1" max="500"></label>
           </div>
           <label class="vrow"><input type="checkbox" id="setAutoApply" class="vchk"> Autopilot applies file changes by itself (old copies are always saved in .oasis-backup; commands still need your click)</label>
+          <label>Thinking models: show the reasoning<select id="setThink"><option value="show">Show it, collapsed above the answer</option><option value="hide">Off: do not think at all (faster)</option></select></label>
           <label class="vrow"><input type="checkbox" id="setCompact" class="vchk"> Keep long chats going: summarize the oldest messages automatically (nothing is deleted from the chat)</label>
         </div>
 
-        <div class="vblock">
+        <div class="vblock" data-tab="behavior">
+          <h3>Memory</h3>
+          <label class="vrow"><input type="checkbox" id="setMemoryEnabled" class="vchk"> Let the AI remember things about you across chats</label>
+          <label id="memoryRow">Memory notes (auto-saved facts — edit or clear anytime)
+            <textarea id="setMemory" placeholder="Nothing saved yet." rows="4"></textarea>
+          </label>
+          <div class="wall-actions">
+            <button type="button" id="memoryClear">Clear memory</button>
+          </div>
+        </div>
+
+        <div class="vblock" data-tab="images">
           <h3>Images, search &amp; memory</h3>
           <label class="vrow"><input type="checkbox" id="setImageGen" class="vchk"> Let the AI generate images when you ask for one</label>
           <label class="vrow"><input type="checkbox" id="setRealImages" class="vchk"> Let the AI find and show real photos (not just AI-generated art)</label>
           <label class="vrow"><input type="checkbox" id="setWebSearch" class="vchk"> Let the AI search the web and open results in a new tab</label>
+          <label class="vrow"><input type="checkbox" id="setWebBrowse" class="vchk"> Let the AI read the web itself and cite its sources: the app searches, opens the top pages, and shows each source with its date, kind of site and an automatic check of every cited sentence (needs the line above on)</label>
+          <label class="vrow"><input type="checkbox" id="setWebAuto" class="vchk"> Check the web first for factual questions: before answering, the app searches and gives the AI the sources, so it compares them with what it already knows (needs the line above on)</label>
+          <label class="vrow"><input type="checkbox" id="setTabClick" class="vchk"> Let the AI click links in a shared tab: when you share a tab with it, it can click a link in that tab, but only when you ask it to</label>
           <label class="vrow"><input type="checkbox" id="setCommands" class="vchk"> Let the AI propose commands to run (needs an open project folder; nothing runs until you click Run)</label>
           <label class="vrow"><input type="checkbox" id="setWinApps" class="vchk"> Let the AI open Windows tools (Task Manager, Device Manager, Settings pages, File Explorer…) and read basic PC info. Tools that change things always ask Yes/Cancel first.</label>
           <div class="media-api-grid">
@@ -174,21 +343,15 @@
               YouTube Data API key <span class="muted">(optional)</span>
               <input id="setYoutubeKey" type="password" autocomplete="off" placeholder="Google API key">
             </label>
-            <label>
-              NASA API key <span class="muted">(optional)</span>
-              <input id="setNasaKey" type="password" autocomplete="off" placeholder="DEMO_KEY works without signup">
-            </label>
           </div>
-          <label class="vrow"><input type="checkbox" id="setMemoryEnabled" class="vchk"> Let the AI remember things about you across chats</label>
-          <label id="memoryRow">Memory notes (auto-saved facts — edit or clear anytime)
-            <textarea id="setMemory" placeholder="Nothing saved yet." rows="4"></textarea>
-          </label>
-          <div class="wall-actions">
-            <button type="button" id="memoryClear">Clear memory</button>
-          </div>
-          <small>Image generation uses Pollinations. Real-image lookup uses TVMaze, Openverse and Wikimedia Commons first, with optional Pexels, Pixabay and TMDB. Extra tools include YouTube, Wikipedia, NASA, Jikan anime, Open-Meteo weather, REST Countries, Frankfurter currency rates and OpenStreetMap places. YouTube/TMDB/NASA keys are optional. Keys are stored only in this browser. Web search opens DuckDuckGo results in a new tab.</small>
+          <h3 class="api-h">My APIs</h3>
+          <small>Add any API you like. Use <code>{query}</code> in the URL where the AI's search goes, and <code>{key}</code> where your key goes (or pick a header). The AI is told each API's name and what it's for, and calls it when it fits.</small>
+          <div id="customApiList"></div>
+          <small id="customApiEmpty" class="muted">No custom APIs yet.</small>
+          <div class="wall-actions"><button type="button" id="addCustomApi">+ Add API</button></div>
+          <small>Image generation uses Pollinations. Real-image lookup uses TVMaze, Openverse and Wikimedia Commons first, with optional Pexels, Pixabay and TMDB. Extra tools include YouTube, Wikipedia, Jikan anime, Open-Meteo weather, REST Countries, Frankfurter currency rates and OpenStreetMap places. YouTube/TMDB keys are optional. Keys are stored only in this browser. Web search opens DuckDuckGo results in a new tab.</small>
         </div>
-        <div class="vblock">
+        <div class="vblock" data-tab="general">
           <h3>Wallpaper</h3>
           <label>Background
             <select id="wallMode">
@@ -212,18 +375,34 @@
         </div>
       </div>
       <div class="col-right">
-        <label>System prompt
+        <label data-tab="general">System prompt
           <div class="persona-row">
             <select id="personaSelect" title="Choose a persona" aria-label="Choose a persona"><option value="">Custom prompt</option></select>
             <button type="button" class="round" id="savePersonaBtn" title="Save current prompt as a persona" aria-label="Save current prompt as a persona"><svg viewBox="0 0 24 24"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H16l3 3v12.5A1.5 1.5 0 0 1 17.5 20h-11A1.5 1.5 0 0 1 5 18.5v-14z"/><path d="M8 3v5h7V3M8 20v-6h8v6"/></svg></button>
             <button type="button" class="round" id="deletePersonaBtn" title="Delete selected persona" aria-label="Delete selected persona"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7M6 7l1 13a2 2 0 0 0 2 1.8h6a2 2 0 0 0 2-1.8l1-13"/></svg></button>
           </div>
+          <div id="personaNamer" class="persona-namer" hidden>
+            <input id="personaNameInput" type="text" maxlength="60" placeholder="Name this prompt (e.g. Coding Assistant)" aria-label="Persona name">
+            <input id="personaEmojiInput" type="text" maxlength="8" placeholder="Emoji (optional, makes it a character)" aria-label="Persona emoji">
+            <button type="button" id="personaNameOk">Save</button>
+            <button type="button" id="personaNameCancel">Cancel</button>
+          </div>
           <textarea id="setSystem" placeholder="Optional. For example: You are a helpful, concise assistant."></textarea>
         </label>
-        <label>Temperature: <span id="tempVal"></span>
+        <label data-tab="general">Temperature: <span id="tempVal"></span>
           <input id="setTemp" type="range" min="0" max="2" step="0.1">
         </label>
-        <div class="vblock">
+        <div class="vblock" id="mcpBlock" data-tab="tools">
+          <h3>Tools (MCP)</h3>
+          <label class="vrow"><input type="checkbox" id="mcpOn" class="vchk"> Let the AI use tools</label>
+          <label class="vrow" id="mcpAskRow"><input type="checkbox" id="mcpAsk" class="vchk"> Ask me before each tool runs</label>
+          <div id="mcpList"></div>
+          <div id="mcpForm" class="mcp-form" hidden></div>
+          <div class="mcp-presets"><button type="button" id="mcpAdd">Add a server…</button> <button type="button" id="mcpPreFiles">+ Files (pick a folder)</button> <button type="button" id="mcpPreMem">+ Memory</button> <button type="button" id="mcpPreFetch">+ Web fetch</button></div>
+          <details class="mcp-tools"><summary>Paste a config (JSON with “mcpServers”)</summary><textarea id="mcpImportText" rows="5" placeholder='{"mcpServers": {"memory": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-memory"]}}}'></textarea><button type="button" id="mcpImportGo">Add</button> <small id="mcpImportMsg"></small></details>
+          <small>Tool servers are programs that run on this computer (or web services) and can read files or change things. Only add ones you trust, and keep “ask me before each tool” on until you do. The model must support tool calling; if it doesn’t, chat simply works without tools. Text a tool returns can contain instructions from strangers (for example a web page): check what the AI asks to run. Programs started with npx need Node.js; uvx needs uv.</small>
+        </div>
+        <div class="vblock" data-tab="voice">
           <h3>Voice</h3>
           <label>Voice engine
             <select id="setEngine">
@@ -249,28 +428,133 @@
               </div>
             </label>
             <button type="button" id="puterSignIn" style="display:none">Sign in to Puter (free)</button>
+            <div id="puterTokenBox" style="display:none">
+              <label>Puter token (use this if the sign-in button says unsupported_origin)
+                <input id="puterToken" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your Puter token here">
+              </label>
+              <small>In a normal browser, sign in at puter.com, open puter.com/dashboard#account, click Copy next to Auth Token, then paste it here. It is stored only on this computer.</small>
+            </div>
             <small id="ttsStatus"></small>
           </div>
           <label id="browserVoiceRow">Reply voice
             <select id="setVoice"><option value="">System default</option></select>
           </label>
+          <label>Voice input (microphone)
+            <select id="setStt">
+              <option value="auto">Automatic (recommended)</option>
+              <option value="browser">Browser’s online speech service (real Chrome or Edge only)</option>
+            </select>
+          </label>
+          <small id="sttStatus"></small>
           <label>Speech speed: <span id="rateVal">1.00×</span>
             <input id="setRate" type="range" min="0.6" max="1.6" step="0.05" value="1">
           </label>
+          <label>Voice volume: <span id="volVal">100%</span>
+            <input id="setVolume" type="range" min="0" max="100" step="5" value="100">
+          </label>
           <label class="vrow"><input type="checkbox" id="setAuto" class="vchk"> Read replies aloud automatically</label>
+          <h3>Live chat</h3>
+          <label class="vrow"><input type="checkbox" id="setWakeOn" class="vchk"> Wait for a wake word before listening</label>
+          <label>Wake word or phrase <input id="setWakeWord" type="text" maxlength="40" placeholder="computer" autocomplete="off" spellcheck="false"></label>
+          <label>Keep the conversation going until it has been quiet for (seconds) <input id="setWakeTimeout" type="number" min="5" max="600"></label>
+          <label>End live chat by itself after this many minutes of silence (0 = never) <input id="setLiveTimeout" type="number" min="0" max="120" step="1"></label>
+          <label class="vrow"><input type="checkbox" id="setWakeBeep" class="vchk"> Play a soft sound when it hears the wake word</label>
+          <label class="vrow"><input type="checkbox" id="setVoiceStop" class="vchk"> Let me interrupt by saying “stop” or the wake word while it talks</label>
+          <label class="vrow"><input type="checkbox" id="setBarge" class="vchk"> Let me interrupt by speaking while it talks</label>
+          <label>Interrupt sensitivity <select id="setBargeSens"><option value="low">Low (speakers, noisy room)</option><option value="normal">Normal</option><option value="high">High (headphones, quiet room)</option></select></label>
+          <small>Press Live chat, say the wake word, then talk normally: it answers out loud and listens again without needing the wake word. After the quiet time above, or if you say “goodbye” or “that’s all”, it goes back to waiting for the wake word. Tap the orb to talk without it. Turn the wake word off to get the old behavior, where it listens right away. Speaking over a reply stops it so you can talk; headphones work best, because speakers can make it hear itself.</small>
           <button type="button" id="voiceTest">Preview voice</button>
-          <small>Voice settings apply right away. In Chrome and Edge the microphone is transcribed by the browser’s online speech service, and voices marked “online” are also processed online.</small>
+          <small>Voice settings apply right away. In the IcyWhite app the microphone is transcribed on this computer by Whisper; the speech model (about 40 MB) downloads once the first time you use Dictate or Live chat, then works offline. Voices marked “online” are processed online.</small>
         </div>
       </div>
     </div>
-    <small>In LM Studio, open the Developer tab, load a model, turn on <b>Enable CORS</b>, and start the server. If this page is on a different computer, also turn on <b>Serve on Local Network</b> and use that computer’s IP address above.</small>
+    <small data-tab="connection">In LM Studio, open the Developer tab, load a model, turn on <b>Enable CORS</b>, and start the server. If this page is on a different computer, also turn on <b>Serve on Local Network</b> and use that computer’s IP address above.</small>
     <div id="testResult"></div>
     <div class="dlg-actions">
+      <span class="dbg-btns"><button type="button" id="debugOpenBtn" title="Open the debug log in a pop-up window">🐞 Debug log</button><button type="button" id="debugCopyBtn" title="Copy the whole debug log to the clipboard">Copy log</button></span>
       <button type="button" id="testBtn">Test connection</button>
       <button type="button" id="cancelSettings">Cancel</button>
       <button type="submit" class="primary" value="save">Save</button>
     </div>
   </form>
+</dialog>
+
+<dialog id="welcomeDlg" aria-labelledby="wlTitle">
+  <div class="wl-box">
+    <h2 id="wlTitle">Welcome to IcyWhite</h2>
+    <p class="wl-sub">A quick check so you can start chatting. It takes about a minute, and you can run it again from Settings.</p>
+
+    <div class="wl-row">
+      <span class="wl-ic" aria-hidden="true">◐</span>
+      <div class="wl-txt"><b>Look</b><small>Light or dark. You can change it any time in Settings.</small></div>
+      <div class="wl-seg" id="wlTheme" role="group" aria-label="Theme">
+        <button type="button" data-t="light">Light</button><button type="button" data-t="dark">Dark</button><button type="button" data-t="system">System</button>
+      </div>
+    </div>
+
+    <div class="wl-row" data-wl="local">
+      <span class="wl-ic" id="wlEngineIc">…</span>
+      <div class="wl-txt"><b>Local engine (llama-server)</b><small id="wlEngineTxt">Checking…</small></div>
+      <div class="wl-act"><button type="button" id="wlRecheck">Check again</button></div>
+    </div>
+
+    <div class="wl-row" data-wl="local">
+      <span class="wl-ic" id="wlModelsIc">…</span>
+      <div class="wl-txt"><b>Models folder</b><small id="wlModelsTxt">Checking…</small></div>
+      <div class="wl-act"><button type="button" id="wlGetModels" title="Search Hugging Face and download models">Get models…</button><button type="button" id="wlPick">Choose…</button><button type="button" id="wlOpen">Open</button></div>
+    </div>
+
+    <div class="wl-row wl-col" data-wl="local">
+      <div class="wl-line">
+        <span class="wl-ic" id="wlStartIc">▶</span>
+        <div class="wl-txt"><b>Run a model on this computer</b><small id="wlStartTxt">Pick a model, then press Start.</small></div>
+      </div>
+      <div class="wl-line">
+        <select id="wlModel" aria-label="Model"></select>
+        <button type="button" id="wlStart" class="primary">Start &amp; use</button>
+      </div>
+      <div id="wlBarRow" hidden><div id="wlBar"><div id="wlBarFill"></div></div><span id="wlBarPct"></span></div>
+    </div>
+
+    <div class="wl-row">
+      <span class="wl-ic" aria-hidden="true">⇄</span>
+      <div class="wl-txt"><b>Or use another app you already run</b><small id="wlOthersTxt">Checking for LM Studio and Ollama…</small></div>
+      <div class="wl-act"><button type="button" id="wlLm" disabled>LM Studio</button><button type="button" id="wlOllama" disabled>Ollama</button></div>
+    </div>
+
+    <div class="dlg-actions">
+      <button type="button" id="wlSkip">Skip for now</button>
+      <button type="button" id="wlDone" class="primary">Finish</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="hfDlg" aria-label="Models from Hugging Face">
+  <div class="hf">
+    <div class="hf-head">
+      <h2 id="hfTitle">Models from Hugging Face</h2>
+      <div class="hf-head-act">
+        <button type="button" id="hfDlBtn" title="Downloads">Downloads <span id="hfDlBadge" class="hf-badge" hidden></span></button>
+        <button type="button" id="hfSetBtn" title="Token, mirror, proxy, speed limit">Hub settings</button>
+        <button type="button" class="round" id="hfClose" aria-label="Close">✕</button>
+      </div>
+    </div>
+    <form class="hf-bar" id="hfForm" autocomplete="off">
+      <input id="hfQuery" type="search" spellcheck="false" placeholder="Search GGUF models, or paste a Hugging Face link or user/repo" aria-label="Search Hugging Face">
+      <button type="submit" class="primary" id="hfGo">Search</button>
+    </form>
+    <div class="hf-filters" id="hfFilters">
+      <label>Sort <select id="hfSort"><option value="downloads">Most downloads</option><option value="likes">Most likes</option><option value="newest">Newest</option><option value="trending">Trending</option><option value="updated">Recently updated</option></select></label>
+      <label>Size <select id="hfSize"><option value="">Any size</option><option value="small">Small (under 4B)</option><option value="medium">Medium (4B to 14B)</option><option value="large">Large (over 14B)</option></select></label>
+      <label>Language <select id="hfLang"><option value="">Any</option><option value="en">English</option><option value="zh">Chinese</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="ja">Japanese</option><option value="ko">Korean</option><option value="ru">Russian</option><option value="pt">Portuguese</option><option value="it">Italian</option><option value="ar">Arabic</option><option value="hi">Hindi</option></select></label>
+      <button type="button" class="hf-chip" id="hfVision" aria-pressed="false" title="Models that can look at pictures">Vision</button>
+      <button type="button" class="hf-chip" id="hfTools" aria-pressed="false" title="Best guess from names and tags">Tool use</button>
+      <button type="button" class="hf-chip" id="hfCoding" aria-pressed="false" title="Best guess from names and tags">Coding</button>
+      <button type="button" class="hf-chip" id="hfTrending" aria-pressed="false" title="Sort by what is popular right now">Trending</button>
+    </div>
+    <div class="hf-hw" id="hfHw"></div>
+    <div class="hf-body" id="hfBody"></div>
+  </div>
 </dialog>
 
 <dialog id="linksDlg">
@@ -345,8 +629,32 @@
 <script src="js/storage-idb.js"></script>
 <script src="js/file-extract.js"></script>
 <script src="js/windows-apps.js"></script>
+<script src="js/builtin-apps.js"></script>
+<script src="js/debuglog.js"></script>
+<script src="js/netlog.js"></script>
+<script src="js/rag.js"></script>
+<script src="js/audio-input.js"></script>
 <script src="js/app.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/theme-colors.js"></script>
+<script src="js/web-sources.js"></script>
+<script src="js/settings-tabs.js"></script>
+<script src="js/settings-search.js"></script>
+<script src="js/provider-chips.js"></script>
+<script src="js/llama-local.js"></script>
+<script src="js/llama-multi-ui.js"></script>
+<script src="js/llama-modern.js"></script>
+<script src="js/hf-hub.js"></script>
+<script src="js/mcp-tools.js"></script>
+<script src="js/welcome.js"></script>
 <script src="js/personas.js"></script>
+<script src="js/stt-local.js"></script>
+<script src="js/wake-word.js"></script>
+<script src="js/tab-voice.js"></script>
+<script src="js/voice-app-commands.js"></script>
+<script src="js/voice-commands.js"></script>
+<script src="js/browse-control.js"></script>
+<script src="js/voice-actions.js"></script>
 <script src="js/voice.js"></script>
 <script src="js/tts-engines.js"></script>
 <script src="js/wallpaper-list.js"></script>

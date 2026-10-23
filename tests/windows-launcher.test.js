@@ -87,7 +87,12 @@ test("aliases: the phrases from the brief resolve to the right tool", () => {
   const r = (t) => W.resolve(t, { strict: true });
   const id = (t) => (r(t) || {}).id;
   for (const t of ["open task manager", "show task manager", "bring up task manager", "show me what's running", "Open Task Manager please"]) assert.equal(id(t), "task-manager", t);
-  for (const t of ["system resources", "resource monitor", "show system resources", "show me resource usage"]) assert.equal(id(t), "resource-monitor", t);
+  assert.equal(id("resource monitor"), "resource-monitor");
+  // "system resources" questions get the numbers in the chat AND open Resource Monitor alongside
+  for (const t of ["system resources", "show system resources", "show me resource usage", "how much ram am i using"]) assert.equal(id(t), "q-resources", t);
+  assert.equal(W.BY_ID["q-resources"].alsoOpen, "resource-monitor");
+  assert.ok(L.QUERY_SCRIPTS["q-resources"]);
+  for (const k of ["q-processes", "q-processes-cpu", "q-processes-ram"]) assert.equal(W.BY_ID[k].alsoOpen, "task-manager", k);
   for (const t of ["system information", "show my computer specs", "show my hardware", "computer information"]) assert.equal(id(t), "system-information", t);
   assert.equal(id("open reliability monitor"), "reliability-monitor");
   assert.equal(id("open directx diagnostic"), "directx-diagnostic");

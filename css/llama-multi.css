@@ -1,0 +1,35 @@
+/* Settings > Local model > Models running */
+#llamaMulti { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--faint) 14%, transparent); border: 1px solid color-mix(in srgb, var(--faint) 30%, transparent); }
+#llamaMulti .lm-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; }
+#llamaMulti .lm-total { font-size: 12px; color: var(--muted); font-weight: 400; }
+#llamaMulti button { border-radius: 999px; padding: 6px 13px; font-size: 12.5px; font-weight: 600; background: rgba(127,140,160,.2); }
+#llamaMulti button.primary { background: var(--accent); color: #fff; }
+#llamaMulti button:disabled { opacity: .45; cursor: default; }
+#lmList { display: flex; flex-direction: column; gap: 8px; }
+.lm-row { padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, var(--faint) 12%, transparent); border: 1px solid color-mix(in srgb, var(--faint) 26%, transparent); display: flex; flex-direction: column; gap: 8px; }
+.lm-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.lm-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--faint); flex: none; }
+.lm-row.ready .lm-dot { background: var(--ok); box-shadow: 0 0 0 3px rgba(22,163,74,.2); }
+.lm-row.starting .lm-dot { background: var(--accent); animation: lmPulse 1s infinite ease-in-out; }
+.lm-row.error .lm-dot { background: var(--bad); }
+.lm-name { flex: 1; min-width: 160px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+.lm-name b { font-size: 13.5px; overflow-wrap: anywhere; }
+.lm-name small { flex-basis: 100%; }
+.lm-badge { font-size: 10.5px; padding: 1px 8px; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 700; }
+.lm-act { display: flex; flex-wrap: wrap; gap: 6px; }
+.lm-rm:hover { color: var(--bad); }
+.lm-err { color: var(--bad); white-space: pre-wrap; }
+.lm-addr { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.lm-addr code { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; user-select: all; }
+.lm-edit { display: flex; flex-direction: column; gap: 10px; padding-top: 8px; border-top: 1px solid color-mix(in srgb, var(--faint) 24%, transparent); }
+.lm-edit button { align-self: flex-start; }
+.lm-sl { display: grid !important; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; font-size: 12.5px; }
+.lm-sl .mrange { grid-column: 1; }
+.lm-sl span { grid-column: 1 / -1; }
+.lm-sl .lm-val { min-width: 44px; text-align: right; font-size: 12.5px; color: var(--text); }
+.lm-add { display: flex; gap: 8px; align-items: center; }
+.lm-add select { flex: 1; min-width: 0; }
+.lm-empty { padding: 2px 2px 0; }
+#llamaMulti .lm-max .mslider { margin-top: 2px; }
+#providerChips button[data-llama-extra].active { background: color-mix(in srgb, var(--accent) 22%, transparent); outline: 1px solid var(--accent); }
+@keyframes lmPulse { 50% { opacity: .35; } }

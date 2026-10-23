@@ -258,7 +258,7 @@ function persistState(){
     username: val("username"),
     roomName: val("roomName"),
     apiBase: val("apiBase"),
-    apiKey: val("apiKey"),
+    apiKey: "",   // the key belongs to the browser settings; never copied into Lobby storage
     model: val("model"),
     plainModel: val("plainModel"),
     globalPrompt: val("globalPrompt"),
@@ -5496,6 +5496,13 @@ function getApiBase(){
 function pickDefaultModel(ids){
   return ids.find(i=>/^qwen\/qwen3-vl-8b$/i.test(i))||ids.find(i=>/qwen.*3.*vl.*8b/i.test(i))||ids.find(i=>/qwen/i.test(i))||ids[0];
 }
+/* No model picked in the browser: use the one the server has loaded, like the browser does. */
+function pickBrowserDefault(ids,info){
+  const want=(window.LobbyConnection&&window.LobbyConnection.current().model)||"";
+  if(want&&ids.includes(want)) return want;
+  const loaded=ids.find(i=>info.get(i)&&info.get(i).loaded===true);
+  return loaded||pickDefaultModel(ids);
+}
 let _modelLoadSeq=0;
 async function loadModels(){
   const seq=++_modelLoadSeq;
@@ -5545,10 +5552,10 @@ async function loadModels(){
         +`<option value="__custom__">✏️ Type a model ID…</option>`;
       if(want&&(ids.includes(want)||typed.includes(want))) sel.value=want;
       else if(sid==="plainModel"&&ids.includes(document.getElementById("model").value)) sel.value=document.getElementById("model").value;
-      else { sel.value=pickDefaultModel(ids); if(want) notes.push(want); }
+      else { sel.value=pickBrowserDefault(ids,info); if(want) notes.push(want); }
       sel.dataset.prev=sel.value;
     });
-    setStatus(ids.length+" model(s) found on "+new URL(base).host+(notes.length?" — \""+notes[0]+"\" isn't there, pick another in Settings":""));
+    setStatus(ids.length+" model(s) found on "+new URL(base).host+(notes.length?" — \""+notes[0]+"\" isn't on this server, so "+document.getElementById("model").value+" is being used. Change the model in the browser's Settings.":""));
     persistState();
   }catch(e){
     if(seq!==_modelLoadSeq) return;
@@ -6548,7 +6555,7 @@ function skipStartupModal(){
 
 }
 
-/* startup box removed: the connection lives in Settings > Model connection */
+/* The connection (server, key, model) comes from the IcyWhite browser settings; see js/browser-connection.js */
 
 
 function addManualModelOption(selectId, modelId){
@@ -8137,7 +8144,7 @@ updateActivityLabels();
 
 initModelPickers();
 initApiAutoRefresh();
-loadModels();
+(window.LobbyConnection ? window.LobbyConnection.apply(false) : Promise.resolve()).then(()=>loadModels());
 
 
 /* ==========================================================

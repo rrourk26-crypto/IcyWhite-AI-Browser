@@ -1,0 +1,97 @@
+/* Message actions (regenerate, edit, continue, delete, version arrows), speed numbers and the context bar. Follows Light / Dark. */
+.msg.user { flex-direction: column; align-items: flex-end; gap: 4px; }
+.msg.user .actions { opacity: 0; transition: opacity .15s; }
+.msg.user:hover .actions, .msg.user .actions:focus-within { opacity: 1; }
+.msg.assistant .actions { flex-wrap: wrap; align-items: center; }
+.actions button:disabled { opacity: .4; cursor: default; }
+.actions .ver { font-size: 12px; color: var(--muted); min-width: 28px; text-align: center; }
+.actions .stats { font-size: 12px; color: var(--faint); margin-left: 8px; align-self: center; white-space: nowrap; }
+.msg .edit-box { width: min(640px, 70vw); min-height: 48px; resize: vertical; padding: 8px 10px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--faint) 50%, transparent); background: var(--composer); color: var(--text); font: inherit; }
+.msg .edit-row { display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end; }
+.msg .edit-row button { padding: 6px 14px; border-radius: 10px; font-weight: 600; font-size: 13px; background: color-mix(in srgb, var(--faint) 22%, transparent); color: var(--text); }
+.msg .edit-row button.primary { background: var(--accent); color: #fff; }
+#ctxBar { display: flex; align-items: center; gap: 10px; max-width: 780px; margin: 0 auto 6px; padding: 4px 6px; font-size: 12px; color: var(--muted); }
+#ctxBar[hidden] { display: none; }
+#ctxTrack { width: 110px; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--faint) 28%, transparent); overflow: hidden; flex: none; }
+#ctxFill { height: 100%; width: 0; background: var(--accent); border-radius: 999px; transition: width .3s; }
+#ctxBar.warn #ctxFill { background: #d97706; }
+#ctxBar.bad #ctxFill { background: var(--bad); }
+#ctxBar.bad #ctxText { color: var(--bad); font-weight: 600; }
+#ctxText { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#ctxBar button { padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; background: color-mix(in srgb, var(--faint) 22%, transparent); color: var(--text); white-space: nowrap; }
+#ctxBar button:hover { background: color-mix(in srgb, var(--faint) 34%, transparent); }
+
+/* Tools (MCP) */
+.tool-box { display: flex; flex-direction: column; gap: 6px; margin: 6px 0; }
+.tool-card { border: 1px solid rgba(128,128,128,.4); border-radius: 8px; padding: 6px 10px; font-size: .9em; }
+.tool-card.error { border-color: #c0392b; } .tool-card.done { border-color: #2e8b57; } .tool-card.pending { border-color: #d19a1a; }
+.tool-head { display: flex; justify-content: space-between; gap: 8px; } .tool-name { font-weight: 600; } .tool-st { opacity: .75; }
+.tool-card pre { white-space: pre-wrap; word-break: break-word; max-height: 220px; overflow: auto; margin: 4px 0; font-size: .85em; }
+.tool-act { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.mcp-srv { border: 1px solid rgba(128,128,128,.4); border-radius: 8px; padding: 6px 10px; margin: 6px 0; }
+.mcp-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; } .mcp-acts { margin-left: auto; display: flex; gap: 4px; } .mcp-meta { opacity: .7; }
+.mcp-dot { width: 9px; height: 9px; border-radius: 50%; background: #888; } .mcp-dot.ready { background: #2e8b57; } .mcp-dot.starting { background: #d19a1a; } .mcp-dot.error { background: #c0392b; }
+.mcp-err { color: #c0392b; font-size: .9em; } .mcp-tool { display: flex; gap: 6px; align-items: center; } .mcp-tools pre { max-height: 160px; overflow: auto; white-space: pre-wrap; font-size: .8em; }
+.mcp-form label { display: block; margin: 6px 0; } .mcp-form input[type=text], .mcp-form textarea, .mcp-form select, #mcpImportText { width: 100%; box-sizing: border-box; }
+.mcp-presets { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; } .mcp-formact { display: flex; gap: 6px; align-items: center; }
+
+/* Thinking blocks, per-chat settings */
+details.think { border-left: 3px solid rgba(128,128,128,.5); margin: 0 0 8px; padding: 2px 10px; opacity: .85; font-size: .92em; }
+details.think summary { cursor: pointer; user-select: none; }
+.think-body { white-space: pre-wrap; max-height: 320px; overflow: auto; padding: 4px 0; }
+#chatCfgBtn.on { outline: 2px solid #d19a1a; }
+#chatCfg textarea, #chatCfg select { width: 100%; box-sizing: border-box; } #chatCfg label { display: block; margin: 8px 0; } #chatCfg .dlg-row { display: flex; gap: 8px; margin-top: 10px; }
+
+/* Chat list */
+#histTools { display: flex; flex-direction: column; gap: 6px; margin: 0 4px 8px; }
+#histSearch { width: 100%; box-sizing: border-box; padding: 7px 10px; }
+.hist-tools-row { display: flex; gap: 6px; flex-wrap: wrap; } .hist-tools-row button { padding: 4px 8px; font-size: 12px; border-radius: 8px; }
+#histMsg { opacity: .8; }
+.hist-item .more { padding: 6px 8px; color: var(--faint); border-radius: 8px; } .hist-item .more:hover { color: var(--text, inherit); }
+.hist-snip { font-size: 12px; opacity: .65; padding: 0 12px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hist-menu { display: flex; flex-direction: column; gap: 3px; padding: 4px 8px 8px; } .hist-menu button, .hist-menu select { text-align: left; padding: 5px 8px; border-radius: 8px; font-size: 13px; }
+.hist-sec { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; opacity: .6; padding: 8px 12px 2px; }
+details.hist-folder > summary { cursor: pointer; display: flex; gap: 4px; align-items: center; padding: 6px 12px; list-style: none; border-radius: 8px; }
+details.hist-folder > summary:hover { background: rgba(128,128,128,.12); } details.hist-folder > summary .fname { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+details.hist-folder > summary button { padding: 2px 6px; opacity: .6; } details.hist-folder > .hist-wrap { padding-left: 10px; }
+.hist-edit { width: calc(100% - 16px); margin: 4px 8px; box-sizing: border-box; padding: 6px 8px; }
+
+/* Compare */
+#cmpDlg { width: min(1100px, 96vw); max-width: 96vw; padding: 0; } .cmp-box { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; max-height: 90vh; }
+.cmp-head { display: flex; justify-content: space-between; align-items: center; } .cmp-head h2 { margin: 0; }
+.cmp-prompt { width: 100%; box-sizing: border-box; } .cmp-opts { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.cmp-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-height: 0; overflow: auto; } @media (max-width: 760px) { .cmp-cols { grid-template-columns: 1fr; } }
+.cmp-col { border: 1px solid rgba(128,128,128,.4); border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.cmp-colhead { display: flex; gap: 6px; align-items: center; } .cmp-colhead select { flex: 1; min-width: 0; } .cmp-temp { width: 60px; }
+.cmp-out { min-height: 120px; max-height: 46vh; overflow: auto; word-break: break-word; }
+
+/* Documents / sources */
+#docDlg { width: min(640px, 96vw); padding: 0; } .doc-box { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; max-height: 88vh; overflow: auto; }
+.doc-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 4px 0; border-bottom: 1px solid rgba(128,128,128,.25); } .doc-name { font-weight: 600; flex: 1; min-width: 120px; word-break: break-all; }
+.doc-emb input, .doc-test input { width: 100%; box-sizing: border-box; } .doc-test { display: flex; gap: 6px; }
+.src-box { border-left: 3px solid rgba(128,128,128,.5); padding: 2px 10px; margin: 6px 0; font-size: .9em; } .src-box summary { cursor: pointer; }
+.src-item { margin: 6px 0; } .src-item.cited b { color: #2e8b57; } .src-item pre { white-space: pre-wrap; word-break: break-word; max-height: 160px; overflow: auto; margin: 2px 0; font-size: .85em; }
+#docBtn.on { outline: 2px solid #2e8b57; }
+
+/* Audio */
+.chat-audio { display: flex; flex-direction: column; gap: 4px; margin: 6px 0; } .chat-audio audio { max-width: 100%; }
+#recClipBtn.on { color: #c0392b; font-weight: 600; }
+
+/* Buttons in the new dialogs look like the rest of the app */
+#cmpDlg button, #docDlg button, #chatCfg button, #mcpBlock button, .tool-card button {
+  padding: 6px 12px; border-radius: 10px; font-weight: 600; font-size: 13px; background: color-mix(in srgb, var(--faint) 20%, transparent); color: var(--text); cursor: pointer; border: 0;
+}
+#cmpDlg button:hover, #docDlg button:hover, #chatCfg button:hover, #mcpBlock button:hover, .tool-card button:hover { background: color-mix(in srgb, var(--faint) 32%, transparent); }
+#cmpDlg button.primary, #docDlg button.primary, #chatCfg button.primary, #mcpBlock button.primary, .tool-card button.primary { background: var(--accent, #2b7fd6); color: #fff; }
+#cmpDlg button:disabled, #docDlg button:disabled { opacity: .45; cursor: default; }
+.cmp-opts label { display: inline-flex; gap: 6px; align-items: center; } #docDlg label, #chatCfg label { display: block; }
+#docDlg label input[type=checkbox] { margin-right: 6px; }
+#cmpDlg .cmp-opts label { flex-direction: row !important; }
+
+/* Live chat: waiting for the wake word */
+#liveBar[data-state="waiting"] .live-orb { background: radial-gradient(circle at 35% 30%, #151a22, #9aa8bb 55%, #64748b); animation: orbBreathe 2.6s infinite ease-in-out; }
+
+/* Live chat: the "Waiting for …" pill fades away; the Live chat button is green while live chat is on */
+#liveBar { transition: opacity .9s ease, max-height .6s ease .3s, margin .6s ease .3s, padding .6s ease .3s, border-width .6s ease .3s; max-height: 120px; overflow: hidden; }
+#liveBar.faded { opacity: 0; pointer-events: none; max-height: 0; margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; border-width: 0; }
+#liveBtn.on { background: rgba(34,197,94,.2); border-color: rgba(34,197,94,.75); color: #16a34a; box-shadow: 0 0 0 3px rgba(34,197,94,.14); }

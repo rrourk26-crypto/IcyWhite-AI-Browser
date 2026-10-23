@@ -1,0 +1,11 @@
+Put each llama.cpp build in its OWN folder in here. A runtime folder is one that has llama-server.exe in it
+together with all its .dll files. Example:
+
+  runtimes\llama.cpp-GPU-NVIDIA CUDA\llama-server.exe  (+ ggml-cuda.dll, cudart64_12.dll, cublas64_12.dll ...)
+  runtimes\llama-cpu\llama-server.exe                  (+ ggml-cpu-*.dll ...)
+  runtimes\llama-vulkan\llama-server.exe               (+ ggml-vulkan.dll ...)
+
+IcyWhite looks at the files in each folder to see what kind of build it is, checks which graphics card this PC has,
+and uses the one that fits: NVIDIA card -> the CUDA build, AMD / Intel -> HIP / SYCL / Vulkan if you added one,
+otherwise the CPU build. You can pick one by hand in Settings > Local model > Runtime.
+Sub-folders up to three levels deep are searched. Folders named "models" are skipped.

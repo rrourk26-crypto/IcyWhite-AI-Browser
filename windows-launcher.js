@@ -76,6 +76,20 @@ const QUERY_SCRIPTS = {
     "Get-CimInstance Win32_DiskDrive | Select-Object Model,@{n='Size (GB)';e={[math]::Round($_.Size/1GB)}},InterfaceType,MediaType " + FT,
     "Get-CimInstance Win32_LogicalDisk | Where-Object { $_.DriveType -in 2,3,4 } | Select-Object DeviceID,VolumeName,FileSystem,@{n='Size (GB)';e={[math]::Round($_.Size/1GB)}},@{n='Free (GB)';e={[math]::Round($_.FreeSpace/1GB)}} " + FT
   ].join("\n"),
+  // live snapshot: CPU load, memory in use, disks, busiest processes
+  "q-resources": [
+    "$os = Get-CimInstance Win32_OperatingSystem",
+    "$cpu = Get-CimInstance Win32_Processor",
+    "$load = [math]::Round(($cpu | Measure-Object LoadPercentage -Average).Average)",
+    "$tot = $os.TotalVisibleMemorySize/1MB; $free = $os.FreePhysicalMemory/1MB; $used = $tot - $free",
+    "'CPU:    ' + ($cpu | Select-Object -First 1).Name + '  -  ' + $load + '% busy now'",
+    "'Memory: ' + [math]::Round($used,1) + ' GB used of ' + [math]::Round($tot,1) + ' GB (' + [math]::Round(100*$used/$tot) + '%), ' + [math]::Round($free,1) + ' GB free'",
+    "'Uptime: ' + [math]::Floor(((Get-Date) - $os.LastBootUpTime).TotalHours) + ' hours'",
+    "''",
+    "Get-CimInstance Win32_LogicalDisk | Where-Object { $_.DriveType -eq 3 } | Select-Object DeviceID,@{n='Size (GB)';e={[math]::Round($_.Size/1GB)}},@{n='Free (GB)';e={[math]::Round($_.FreeSpace/1GB)}},@{n='Used %';e={[math]::Round(100*($_.Size-$_.FreeSpace)/$_.Size)}} " + FT,
+    "'Busiest programs by memory:'",
+    "Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 6 ProcessName,@{n='MemMB';e={[math]::Round($_.WorkingSet64/1MB)}} " + FT
+  ].join("\n"),
   "q-network-adapters": "Get-CimInstance Win32_NetworkAdapter | Where-Object { $_.PhysicalAdapter } | Select-Object Name,NetConnectionID,MACAddress,NetEnabled " + FT,
   "q-processes": [
     "$p = @(Get-Process)",

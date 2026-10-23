@@ -1,6 +1,8 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("oasisElectron", {
+  shareFollowSet: (req) => ipcRenderer.invoke("share-follow-set", req),
+  onShareStarted: (callback) => ipcRenderer.on("oasis-share-started", (_event, info) => callback(info)),
   captureBrowser: () => ipcRenderer.invoke("capture-browser"),
   captureWebView: (id) => ipcRenderer.invoke("capture-webview", id),
   captureSource: () => ipcRenderer.invoke("capture-source"),
@@ -17,9 +19,45 @@ contextBridge.exposeInMainWorld("oasisElectron", {
   closeWindow: () => ipcRenderer.invoke("close-window"),
   clearBrowsingData: (partition, opts) => ipcRenderer.invoke("clear-browsing-data", partition, opts),
   onDownloadUpdate: (callback) => ipcRenderer.on("oasis-download-update", (_event, data) => callback(data)),
+  getPref: (key) => ipcRenderer.invoke("prefs-get", key),
+  setPref: (key, value) => ipcRenderer.invoke("prefs-set", key, value),
+  onPref: (callback) => ipcRenderer.on("oasis-pref", (_event, key, value) => callback(key, value)),
+  debugAdd: (level, msg, multi) => ipcRenderer.send("debug-log-add", level, msg, !!multi),
+  debugGet: () => ipcRenderer.invoke("debug-log-get"),
+  debugClear: () => ipcRenderer.invoke("debug-log-clear"),
+  debugCopy: () => ipcRenderer.invoke("debug-log-copy"),
+  debugOpen: () => ipcRenderer.invoke("debug-log-open"),
+  debugPin: (on) => ipcRenderer.invoke("debug-log-pin", on),
+  onDebugLine: (callback) => ipcRenderer.on("debug-log-line", (_event, line) => callback(line)),
   projectPick: () => ipcRenderer.invoke("project-pick"),
   projectOpen: (root) => ipcRenderer.invoke("project-open", root),
   projectRead: (rel) => ipcRenderer.invoke("project-read", rel),
   projectWrite: (rel, content) => ipcRenderer.invoke("project-write", rel, content),
-  projectDelete: (rel) => ipcRenderer.invoke("project-delete", rel)
+  projectDelete: (rel) => ipcRenderer.invoke("project-delete", rel),
+  // Password manager (browser shell only; main.js refuses every other page)
+  pw: {
+    status: () => ipcRenderer.invoke("pw-status"),
+    setup: (m) => ipcRenderer.invoke("pw-setup", m),
+    unlock: (m) => ipcRenderer.invoke("pw-unlock", m),
+    lock: () => ipcRenderer.invoke("pw-lock"),
+    changeMaster: (o, n) => ipcRenderer.invoke("pw-change-master", o, n),
+    list: () => ipcRenderer.invoke("pw-list"),
+    reveal: (id) => ipcRenderer.invoke("pw-reveal", id),
+    add: (entry) => ipcRenderer.invoke("pw-add", entry),
+    update: (id, patch) => ipcRenderer.invoke("pw-update", id, patch),
+    remove: (id) => ipcRenderer.invoke("pw-remove", id),
+    find: (url) => ipcRenderer.invoke("pw-find", url),
+    fillData: (id, url) => ipcRenderer.invoke("pw-fill-data", id, url),
+    check: (url, u, p) => ipcRenderer.invoke("pw-check", url, u, p),
+    isNever: (url) => ipcRenderer.invoke("pw-is-never", url),
+    setNever: (url) => ipcRenderer.invoke("pw-set-never", url),
+    clearNever: () => ipcRenderer.invoke("pw-clear-never"),
+    settings: (patch) => ipcRenderer.invoke("pw-settings", patch),
+    generate: (o) => ipcRenderer.invoke("pw-generate", o),
+    reset: (m) => ipcRenderer.invoke("pw-reset", m),
+    copy: (text) => ipcRenderer.invoke("pw-copy", text),
+    importCsv: () => ipcRenderer.invoke("pw-import"),
+    exportCsv: (m) => ipcRenderer.invoke("pw-export", m),
+    onState: (cb) => ipcRenderer.on("pw-state", (_e, s) => cb(s))
+  }
 });
