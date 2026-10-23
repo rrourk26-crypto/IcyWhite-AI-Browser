@@ -1,18 +1,18 @@
-# 🌐 Oasis Agentic Browser
+# ❄️ IcyWhite 2.0
 
-**Oasis Agentic Browser** is an open-source, local-first AI browser and Windows desktop workspace built around **agentic AI, local models, automation, and direct access to your computer**.
+**An open-source, local-first AI browser and Windows desktop workspace built around local AI, agentic tools, automation, voice interaction, and direct access to your workspace.**
 
-> **Formerly known as Oasis Browser** 
+> Formerly known as Oasis Agentic Browser.
 
-**Oasis Agentic Browser** is an open-source, local-first browser and desktop workspace for Windows.
+IcyWhite is an open-source browser and desktop workspace designed to bring web browsing, local AI models, Windows tools, applications, files, media, development projects, and personal utilities together in one environment.
 
-Oasis is designed to bring web browsing, local AI, Windows tools, applications, files, media, communication, games, and personal projects together in one place.
+Built with **Electron, JavaScript, HTML, and CSS**, IcyWhite combines the flexibility of web technologies with Windows desktop capabilities and support for locally hosted AI.
 
-It is built with **Electron**, while also allowing local web applications and tools to operate inside the Oasis environment.
+The project has evolved through experiments with local models, browser tools, application integrations, runtime management, and AI-assisted workflows.
 
 The goal is simple:
 
-> **Give people a workspace they can actually make their own.**
+> **Your browser. Your AI. Your computer. Your workspace. Your control.**
 
 ---
 
@@ -44,41 +44,72 @@ The goal is simple:
 
 ---
 
-# ✨ What Is Oasis?
+### IcyWhite Browser
 
-Oasis is more than a traditional web browser.
+![IcyWhite Browser](screenshots/main.png)
 
-It can act as a central workspace for your computer, combining:
+### Web Browsing
 
-* Web browsing
-* Local AI
-* Windows commands
-* PowerShell
-* Command Prompt
-* Windows application launching
-* Local HTML applications
-* Games
-* File management
-* ZIP files
-* Shared workspace projects
-* Screen sharing
-* Webcam access
-* Media
-* Messaging
-* Developer tools
-* Personal utilities
+![IcyWhite browsing Google](screenshots/google.png)
 
-Instead of treating every capability as a separate application, Oasis brings them together into one environment.
+![IcyWhite browsing GitHub](screenshots/github.png)
+
+### Projects and Files
+
+![IcyWhite Project Folder](screenshots/project%20folder.png)
+
+### AI and Developer Tools
+
+![IcyWhite AI Tools](screenshots/WORKING1.png)
+
+### Screen Sharing
+
+![IcyWhite Screen Sharing](screenshots/SCREENSHARE.png)
+
+*Replace legacy Oasis screenshots with current IcyWhite screenshots where the interface has changed.*
+
+---
+
+# ✨ What Is IcyWhite?
+
+IcyWhite is more than a traditional web browser.
+
+It is designed as a central workspace for browsing, local AI, development, and computer-based tasks.
+
+The project includes components for:
+
+- Web browsing and tab management
+- Local AI and configurable model connections
+- Bundled llama.cpp runtime support
+- CPU, Vulkan, and NVIDIA CUDA inference options
+- Hugging Face model discovery and management
+- Voice commands and speech-related tools
+- Model Context Protocol (MCP) integrations
+- Retrieval-augmented generation (RAG)
+- Local AI memory components
+- Windows commands and utilities
+- Local HTML and JavaScript applications
+- File and project workflows
+- ZIP and archive-related workflows
+- Screen capture and sharing integrations
+- Media and browser-supported hardware access
+- Web research and source tools
+- Password-management components
+- Debug logging and developer tools
+- Customizable themes and settings
+- Automated tests for selected components
+
+The aim is to bring these capabilities into one adaptable environment rather than forcing every workflow into a separate application.
 
 ---
 
 # 🪟 Windows Integration
 
-Oasis can interact with Windows through **PowerShell and Command Prompt (CMD)**.
+IcyWhite is a Windows desktop application built with Electron.
 
-This allows users and applications to work with normal Windows commands and utilities.
+Depending on the feature and its implementation, Electron applications can interact with local files, launch processes, communicate with local services, and use Windows utilities.
 
-Examples include:
+Common Windows commands include:
 
 ```text
 ipconfig
@@ -103,456 +134,526 @@ where
 tree
 ```
 
-Oasis can also launch Windows applications and utilities.
+These are examples of Windows commands, not a guarantee that every command is directly exposed through every IcyWhite interface.
 
-This allows an Oasis-based application to open or interact with programs already installed on the user's computer rather than being limited to ordinary web pages.
+Windows integration is intended to support a flexible environment for development, troubleshooting, local AI, and personal productivity.
 
-Examples can include Windows utilities, development tools, media applications, file tools, and other installed programs.
+**Security matters:** commands that modify files, launch processes, or change system settings should be handled carefully. Never execute untrusted AI-generated commands without reviewing them.
 
 ---
 
 # 🤖 Local AI
 
-Oasis is designed to work with **locally hosted AI**.
+Local AI is one of the central goals of IcyWhite.
 
-The local AI system has been **tested and successfully connected using LM Studio** through its OpenAI-compatible API.
+Rather than requiring every AI interaction to go through a cloud service, IcyWhite supports connecting to local AI servers and includes runtime-management components for running compatible models on the user's own hardware.
 
-The tested local API endpoint is:
+The project has previously been tested with LM Studio using its OpenAI-compatible API.
+
+## 🔌 LM Studio
+
+The previously tested local endpoint is:
 
 ```text
 http://localhost:1234/v1
 ```
 
-This allows Oasis to communicate with AI models running directly on the user's own computer.
+LM Studio can expose a local model through an API that compatible applications can use.
 
-## ✅ Tested Local Models
-
-Oasis has been tested with local models running through LM Studio, including:
-
-* **google/gemma-4-e4b**
-* **Qwen3-VL-8B-Instruct-Q4_K_M.gguf**
-* **OPENAI API **
-
-The Qwen model configuration has also been tested through the local LM Studio API.
-
-The specific model can be changed inside the local AI server without requiring Oasis itself to be rebuilt.
-
-## 🔌 OpenAI-Compatible API
-
-Oasis also includes an **OpenAI-compatible API connection**.
-
-This connection has been tested and works with the local LM Studio server.
-
-The important part is that Oasis does not require the AI server itself to be OpenAI's cloud service.
-
-A compatible local server can provide the same API-style interface while the actual model runs on the user's own computer.
-
-For example:
+The general connection looks like this:
 
 ```text
-Oasis
-  ↓
+IcyWhite
+    |
+    v
 OpenAI-compatible API
-  ↓
+    |
+    v
 LM Studio
-  ↓
-Gemma 4 / Qwen / other local model
-  ↓
+    |
+    v
+Local AI model
+    |
+    v
 Your computer
 ```
 
-This makes it possible to use Oasis with local AI without sending every AI request to a paid cloud provider.
+The API format does not mean the model must run on OpenAI's cloud. A compatible local server can provide the interface while inference happens on the user's machine.
 
-## 🎛️ AI Freedom
+The endpoint above is the previously tested LM Studio configuration. Other backends require their own appropriate configuration.
 
-The goal is to give users freedom over:
+## 🧠 Local Model Freedom
 
-* Which model they use
-* Where the model runs
-* Which AI server they connect to
-* Which local AI tools they use
-* Their own AI applications
-* Their model configuration
-* Their computer hardware
+IcyWhite is designed to support flexibility in:
 
-Oasis is not intended to lock users into one AI provider or one model.
+- Which model is used
+- Where inference happens
+- Which compatible AI server is connected
+- Which local runtime is selected
+- How much processing is assigned to the CPU or GPU
+- Which AI tools and integrations are enabled
+- How the workspace is customized
 
-If a compatible local AI server can provide the required API interface, it can potentially be used with Oasis.
+Previously tested model configurations include:
 
----
+- Google Gemma models, including Gemma 4
+- Qwen-family models, including Qwen vision-language configurations
+- Other models compatible with the selected local inference server
 
-# 📁 Shared Workspace
+Model compatibility depends on the server, model architecture, quantization, context requirements, available memory, and hardware.
 
-Oasis can use a shared **`workspace`** folder for projects and files.
+The exact models available to a user depend on what they download and configure.
 
-The workspace can contain practically anything the user wants to work with, including:
+## 🌐 Cloud AI and Compatible APIs
 
-* HTML applications
-* JavaScript
-* CSS
-* Images
-* Documents
-* Games
-* AI projects
-* Utilities
-* Development projects
-* ZIP files
-* Personal files
-* Experimental applications
+IcyWhite can also connect to compatible external APIs when configured to do so.
 
-The idea is that the workspace becomes a common place where Oasis applications and user projects can work together.
+Cloud AI and local AI are different operating modes. External providers may receive prompts and other data sent to their services.
 
-**Your workspace is yours.**
+The goal is not to lock users into a single AI provider or model. Users should be able to choose the approach that fits their hardware, privacy requirements, and workflow.
 
 ---
 
-# 📦 ZIP Files
+# ⚡ Built-In llama.cpp Runtime Support
 
-Oasis supports working with ZIP files and project archives.
+IcyWhite includes runtime-management components intended to support local inference through llama.cpp.
 
-ZIP files can be uploaded or imported into the workspace so projects and collections of files can be moved around without requiring a separate application for every basic operation.
+The project organizes runtime files by backend.
 
-This also makes it easier to share projects between users.
+| Runtime | Purpose |
+|---|---|
+| CPU | Local inference using the processor |
+| Vulkan | GPU acceleration through Vulkan-compatible hardware |
+| NVIDIA CUDA | GPU acceleration on compatible NVIDIA hardware |
 
----
-
-# 📷 Webcam and Media Access 
-
-Oasis can provide access to browser-supported hardware and media capabilities when the user grants permission.
-
-This can include:
-
-* Webcam
-* Microphone - Not Functional in this Version
-* Camera
-* Screen capture
-* Screen sharing
-* Other supported media devices
-
-Applications running inside Oasis can use these capabilities when appropriate permissions are granted.
-
----
-
-# 🖥️ Screen Sharing
-
-Oasis can support screen-sharing functionality through Electron and browser media APIs.
-
-This can allow applications to work with:
-
-* Desktop screens
-* Application windows
-* Browser windows
-* Screen capture
-* Remote collaboration tools
-* Streaming and communication applications
-
-Permissions remain under the user's control.
-
----
-
-# 🌐 Web + Local Applications
-
-Oasis can combine ordinary websites with local applications.
-
-A project can contain its own HTML, CSS, JavaScript, images, games, tools, or other resources and run them inside Oasis.
-
-This makes it possible to build small applications without requiring every project to become a completely separate Windows program.
-
-Examples include:
-
-* Games
-* Dashboards
-* AI interfaces
-* Utilities
-* Media players
-* Productivity tools
-* Experimental applications
-* Personal websites
-* Developer tools
-
----
-
-# 🎮 Games and Experimental Projects
-
-Oasis can also serve as a home for games and experimental applications.
-
-Projects can be added to the workspace and launched from within Oasis.
-
-The goal is not to restrict Oasis to one particular type of application.
-
-If it can be built as a compatible web or local application, it can potentially become part of an Oasis workspace.
-
----
-
-# 🛠️ Built With Electron
-
-Oasis is built using **Electron**.
-
-Electron allows Oasis to combine web technologies with native desktop capabilities.
-
-The project can therefore use technologies such as:
-
-* HTML
-* CSS
-* JavaScript
-* Node.js
-* Electron APIs
-* Windows commands
-* Local files
-* Local services
-* Web APIs
-
-This makes Oasis both a browser environment and a Windows desktop application.
-
----
-
-# 🚀 Building Oasis
-
-Anyone can download the source code, modify it, and build their own version.
-
-## Requirements
-
-You will need:
-
-* Windows 10 or Windows 11
-* Node.js
-* npm
-* Git is recommended
-
----
-
-## 📥 Install Dependencies
-
-Clone or download the repository and open PowerShell in the Oasis project directory.
-
-Then run:
-
-```powershell
-npm install
-```
-
-This installs the project's required Node.js and Electron dependencies.
-
----
-
-# ▶️ Run Oasis From Source
-
-To run Oasis directly from the source code:
-
-```powershell
-npm start
-```
-
-This launches the Electron application without creating a standalone installer.
-
-This is useful when developing or testing changes.
-
----
-
-# 🧪 Development Workflow
-
-A basic development workflow is:
-
-```powershell
-npm install
-npm start
-```
-
-Modify the source code, save your changes, and test the application.
-
-You can then build your updated version for Windows.
-
----
-
-# 🏗️ Build the Windows Version
-
-Oasis can be packaged as a Windows Electron application.
-
-Run:
-
-```powershell
-npm run build:win
-```
-
-The Electron builder configuration in `package.json` determines the exact Windows output.
-
-The generated Windows installer and packaged application are normally placed in:
+The runtime directories currently include:
 
 ```text
-dist
+runtimes/
+├── llama-cpu/
+├── llama-vulkan-x64/
+└── llama.cpp-GPU-NVIDIA CUDA/
 ```
 
-The exact filenames can change between releases.
+The exact contents can vary by build.
+
+The intended benefit is to give IcyWhite a path toward running local models without requiring LM Studio or another external model-server application for every workflow.
+
+Runtime selection and model execution still depend on the available binaries, drivers, hardware, model compatibility, and application configuration.
+
+## 💻 CPU Runtime
+
+The CPU backend provides a route for running compatible models without requiring a supported GPU backend.
+
+CPU inference can be useful on systems without compatible GPU acceleration, although performance depends heavily on the processor, memory, and model size.
+
+## 🎮 Vulkan Runtime
+
+The Vulkan backend provides GPU acceleration on compatible hardware.
+
+Performance and compatibility depend on the graphics device, installed drivers, and the particular runtime build.
+
+## 🟢 NVIDIA CUDA Runtime
+
+The CUDA backend targets compatible NVIDIA GPUs.
+
+It requires compatible NVIDIA hardware, drivers, and the correct supporting CUDA libraries.
+
+**Large binary note:** Some CUDA DLLs are intentionally excluded from the Git repository because of GitHub's individual file-size restrictions. In particular, `cublasLt64_12.dll` and `ggml-cuda.dll` are not included in the committed repository version.
+
+Users who need these files must obtain compatible copies from a trusted distribution and place them in the appropriate runtime directory. Do not assume every runtime folder is complete immediately after cloning the repository.
 
 ---
 
-# 📦 Creating Your Own Oasis Build
+# 🤗 Hugging Face and Model Management
 
-Because Oasis is open source, you can create your own customized build.
+IcyWhite includes Hugging Face model-management components.
 
-You can change things such as:
+These are intended to make discovering, managing, and working with compatible models more convenient from within the application.
 
-* Application name
-* Icon
-* User interface
-* Colors
-* Applications
-* Browser behavior
-* AI configuration
-* Windows integration
-* Workspace behavior
-* Games
-* Tools
-* Navigation
-* Settings
-* File handling
-* Built-in services
+Model-management functionality is designed around workflows such as:
 
-Then build your customized version:
+- Discovering available models
+- Reviewing model information
+- Managing local model resources
+- Preparing models for local inference
+- Connecting compatible models to the appropriate runtime
 
-```powershell
-npm run build:win
-```
+Model downloads can be large. Check available disk space, model requirements, and hardware compatibility before downloading.
 
-You can distribute your own version according to the terms of the project's license.
+A model's presence on Hugging Face does not guarantee that it will run correctly on every computer.
 
 ---
 
-# 🔀 Fork Oasis
+# 🎙️ Voice and Speech Tools
 
-You are encouraged to fork Oasis.
+IcyWhite 2.0 includes a collection of voice-related components intended to make the workspace more interactive.
 
-You can:
+These include:
 
-* Fork the repository
-* Change the source
-* Rename it
-* Replace the interface
-* Add applications
-* Remove applications
-* Add new Windows features
-* Add your own AI system
-* Create your own workspace
-* Build your own version
-* Share your modifications
-* Create something completely different from the original
+- Microphone-input components
+- Speech-to-text integration
+- Voice commands
+- Browser and application command handling
+- Wake-word components
+- Text-to-speech integration points
+- Voice-related help and configuration interfaces
 
-Your fork does not have to remain identical to Oasis.
+Voice workflows can connect speech input with AI interaction and application actions, depending on the configured backend and the functionality available in the current build.
 
-Oasis is intended to be a foundation that people can build on.
+Some voice features may require separate speech-recognition or speech-synthesis models, services, permissions, or additional configuration.
 
----
+**Known limitation:** Microphone and live-chat behavior must be verified against the current build. Older Oasis versions had microphone and live-chat problems, so those historical instructions should not be assumed to describe IcyWhite 2.0 accurately.
 
-## 🎤 Microphone Permissions / Live Chat Known Issue / Not Working
-May not work correctly/future updates will address the known issue 
-
- **Live Chat is not working**, or Oasis does not respond when you try to **talk through the microphone**, the problem is a result of Windows microphone permissions.
-
-Oasis needs microphone access for Live Chat voice features.
-
-### Windows Fix / Possible Will Be Addressed in Future Updates
-
-Go to:
+For Windows microphone troubleshooting, check:
 
 **Windows Settings → Privacy & security → Microphone**
 
-You Can Try To Make sure these are enabled: Failed in Test.
-
-* **Microphone access** → ON
-* **Let apps access your microphone** → ON
-* **Let desktop apps access your microphone** → ON
-
-After enabling these permissions:
-
-1. Completely close Oasis.
-2. Reopen Oasis.
-3. Try Live Chat again.
-4. Test the microphone/voice input.
-
-## 📱 Oasis AI Workspace for Android
-
-Oasis AI Workspace is available for Android as an APK download.
-
-### Download
-
-**[⬇️ Download the latest Android APK from Releases](../../releases/latest)**
-
-1. Open the Releases page.
-2. Download the `.apk` file attached to the latest release.
-3. Open the downloaded file on your Android device.
-4. If prompted, allow your browser or file manager to install unknown apps.
-5. Follow the installation prompts to install Oasis.
-
-### Installation Notes
-
-- Android may display a security warning when installing an APK downloaded outside Google Play.
-- Only install APKs from a source you trust.
-- If Android reports that the app cannot be installed, check your Android version and whether an existing installation conflicts with the downloaded package.
-
-### About the Android Version
-
-The Android app packages the Oasis web interface in a native Android application using Capacitor.
-
-Oasis is an ongoing project. Features and compatibility may differ between the Android and desktop versions.
-
-**Project:** Oasis AI Workspace  
-**Platform:** Android  
-**Package format:** APK
-
-For bug reports, installation issues, or feature requests, please open an issue in this repository.
-
-### ⚠️ Important
-
-Because Oasis runs as a Windows desktop application, **"Let desktop apps access your microphone" is especially important**.
-
-If this permission is disabled, Oasis may still open normally, but **Live Chat voice input and talking to the AI through the microphone will not work**.
-
-If Windows displays a microphone permission prompt when Oasis first tries to access the microphone, **allow access**.
-
-If Live Chat still does not work after enabling the permissions, check that Windows is using the correct microphone under:
+Also check:
 
 **Windows Settings → System → Sound → Input**
 
+Make sure the intended microphone is selected and that the necessary permissions are enabled.
 
-# 🔐 Planned Password Manager
+---
 
-A future version of Oasis is planned to include a **built-in password manager**.
+# 🧰 MCP and AI Tool Integration
 
-The goal is to eventually allow users to securely manage passwords and other credentials directly inside Oasis instead of requiring a completely separate password-management application.
+IcyWhite includes Model Context Protocol (MCP)-related components.
 
-The password manager is a **planned feature** and is **not included in the current release**.
+MCP provides a standard approach for connecting compatible AI clients with external tools and services.
 
-Security will be an important consideration when this feature is implemented.
+The project's MCP-related components provide a foundation for expanding AI tool access and integrating additional capabilities into the workspace.
+
+Depending on the configured integration, tools can potentially provide access to information or actions beyond a basic text conversation.
+
+Only connect trusted MCP servers and review the permissions and actions they expose. Tool access can have consequences beyond the chat itself.
+
+---
+
+# 📚 RAG and Local AI Memory
+
+IcyWhite includes components for retrieval-augmented generation (RAG) and AI memory workflows.
+
+RAG can help an AI system retrieve relevant information from a collection of documents or other indexed content before generating a response.
+
+Memory-related components are intended to support workflows that benefit from retaining or retrieving relevant information across interactions.
+
+These capabilities depend on their configuration, data sources, indexing behavior, and the connected model.
+
+They should not be assumed to provide perfect recall or automatically understand every file in a workspace.
+
+---
+
+# 📁 Shared Workspace and Projects
+
+IcyWhite is designed to provide a common environment for projects, files, and local applications.
+
+A workspace can contain resources such as:
+
+- HTML applications
+- JavaScript and CSS
+- Images and other media
+- Documents
+- Games
+- AI projects
+- Development projects
+- Utilities
+- ZIP archives
+- Personal files
+- Experimental applications
+
+The goal is to make it easier to organize projects and integrate compatible local tools into one environment.
+
+**Your workspace is yours.**
+
+Keep backups of important files, especially when using tools that can edit, move, or delete local content.
+
+---
+
+# 📦 ZIP Files and Archives
+
+IcyWhite's project workflows include ZIP and archive-related support.
+
+Archives are useful for transferring projects, organizing groups of files, and distributing collections of resources.
+
+The exact import, extraction, and file-management operations available depend on the current implementation.
+
+Only open archives from sources you trust, and review extracted content before running scripts or executables.
+
+---
+
+# 🌐 Web and Local Applications
+
+IcyWhite brings ordinary web browsing together with the possibility of working with local applications.
+
+Compatible projects can use web technologies such as:
+
+- HTML
+- CSS
+- JavaScript
+- Images
+- Browser APIs
+- Local services
+- Other supported resources
+
+Examples of potential workspace applications include:
+
+- AI interfaces
+- Dashboards
+- Utilities
+- Media interfaces
+- Productivity tools
+- Games
+- Personal websites
+- Developer tools
+- Experimental applications
+
+The objective is to make the browser a flexible platform for more than visiting websites.
+
+---
+
+# 🖥️ Screen Sharing, Webcam, and Media
+
+IcyWhite can use Electron and browser media APIs for supported media and capture workflows.
+
+Depending on the feature, operating system, and permissions, these APIs can provide access to:
+
+- Webcam and camera devices
+- Microphones
+- Screen capture
+- Application windows
+- Desktop screens
+- Browser media
+- Other supported media devices
+
+Not every capability is available in every build, and permission requirements vary.
+
+Grant access only to applications and services you trust.
+
+---
+
+# 🔐 Password Manager Components
+
+IcyWhite 2.0 includes password-management interface and supporting code components.
+
+The presence of these components should not be interpreted as proof that the password manager has undergone a security audit or is suitable for storing production credentials.
+
+Before relying on it for sensitive information, verify its encryption, credential storage, key handling, access controls, and recovery behavior.
+
+Security-sensitive features should be evaluated separately from ordinary user-interface functionality.
+
+---
+
+# 🎨 Themes and Customization
+
+IcyWhite includes theme and settings components intended to make the workspace more personal.
+
+Customization includes light and dark interface styles, theme-related settings, and support for additional color adjustments.
+
+The broader goal is to let users adapt the interface to their preferences rather than requiring everyone to use the same appearance.
+
+The project can also be modified at the source level to change interface components, behavior, and application integrations.
+
+---
+
+# 🛠️ Developer Tools and Diagnostics
+
+IcyWhite includes developer-oriented components and automated tests for selected functionality.
+
+The repository includes areas for:
+
+- Debug logging
+- Network and service-related logging
+- AI and model management
+- Voice-related features
+- MCP tools
+- RAG components
+- Password-management code
+- Browser and workspace utilities
+- Automated tests
+
+These tools support development and troubleshooting.
+
+The presence of tests does not mean every feature, backend, runtime, or hardware configuration has been tested.
+
+---
+
+# 🏗️ Built with Electron
+
+IcyWhite is built with Electron, combining web technologies with desktop application capabilities.
+
+The project uses technologies including:
+
+- Electron
+- HTML
+- CSS
+- JavaScript
+- Node.js
+- Electron APIs
+- Windows integrations
+- Local AI services
+- llama.cpp runtime binaries
+- Browser and web APIs
+
+This makes IcyWhite both a browser environment and a Windows desktop workspace.
+
+---
+
+# 🚀 Building IcyWhite
+
+Anyone can clone the source, inspect it, modify it, and create their own build.
+
+## Requirements
+
+- Windows 10 or Windows 11
+- Node.js
+- npm
+- Git, recommended
+
+Additional requirements depend on the selected AI backend and runtime.
+
+## 📥 Install Dependencies
+
+Clone the repository:
+
+```powershell
+git clone https://github.com/rrourk26-crypto/IcyWhite-AI-Browser.git
+cd IcyWhite-AI-Browser
+```
+
+Install the dependencies:
+
+```powershell
+npm install
+```
+
+## ▶️ Run IcyWhite from Source
+
+```powershell
+npm start
+```
+
+This launches the Electron application using the project's configured development start command.
+
+## 🧪 Development Workflow
+
+A basic workflow is:
+
+```powershell
+npm install
+npm start
+```
+
+Make changes to the source code, then run the relevant application workflows to verify your changes.
+
+If you modify code covered by automated tests, run the relevant tests as part of development.
+
+## 🧪 Automated Tests
+
+The repository includes tests for selected components.
+
+If the project's `package.json` defines the test script, run:
+
+```powershell
+npm test
+```
+
+The exact coverage depends on the available tests and configured test runner.
+
+## 🏗️ Build for Windows
+
+If supported by the current package configuration, build the Windows application with:
+
+```powershell
+npm run build:win
+```
+
+A portable build may also be available through:
+
+```powershell
+npm run build:portable
+```
+
+The actual commands depend on the scripts configured in `package.json`.
+
+Generated artifacts are normally written to:
+
+```text
+dist/
+```
+
+The exact output files depend on the build configuration.
+
+---
+
+# 📦 Runtime and Distribution Notes
+
+The Git repository contains source code and selected runtime binaries. It is not necessarily a complete, self-contained distribution for every hardware configuration.
+
+Before distributing a build:
+
+1. Confirm that the required runtime files are present.
+2. Confirm that the selected CPU, Vulkan, or CUDA backend is compatible with the target computer.
+3. Verify that required model files and supporting libraries are available.
+4. Check the packaging configuration and generated application resources.
+5. Test the intended build on a clean environment before describing it as ready for general use.
+
+Large model weights should generally be distributed separately from the source repository.
+
+Large runtime libraries may require an external distribution method or Git LFS if they are to be shared through version control.
+
+---
+
+# 🔀 Fork IcyWhite
+
+IcyWhite is intended to be a foundation people can adapt to their own needs.
+
+You can:
+
+- Fork the repository
+- Modify the source
+- Customize the interface
+- Change the application name and icon
+- Add or remove workspace applications
+- Add AI providers or compatible local servers
+- Extend runtime management
+- Build new tools and integrations
+- Customize themes and settings
+- Experiment with new workflows
+- Share your modifications
+
+A fork does not have to remain identical to the original project.
+
+The goal is to give developers and users a foundation they can understand, change, and build upon.
 
 ---
 
 # 🔮 Future Development
 
-Oasis is an evolving project.
+IcyWhite is an evolving project.
 
-Possible future features include:
+Possible areas of future development include:
 
-* Built-in password manager
-* More Windows integration
-* Additional Windows application controls
-* More local AI capabilities
-* Additional productivity tools
-* Expanded file-management features
-* More communication tools
-* More games
-* Additional media capabilities
-* Improved workspace management
-* More local services
-* Additional developer tools
-* Greater customization
+- Expanded local AI support
+- Additional runtime and hardware compatibility
+- Improved voice workflows
+- More agentic tool integrations
+- Better file and project management
+- Additional browser utilities
+- Expanded offline capabilities
+- Improved model discovery and setup
+- More customization
+- Additional developer tools
+- More robust security and permission controls
 
-The project is intentionally open-ended.
+Future features depend on development, testing, and hardware compatibility. Planned functionality should not be treated as available until it has been implemented and verified.
 
 ---
 
 # 🌱 Project Philosophy
 
-Oasis is built around a simple idea:
+IcyWhite is built around a simple idea:
 
 > **Your computer should belong to you.**
 
@@ -560,123 +661,80 @@ Your files should be accessible.
 
 Your applications should be customizable.
 
-Your AI should be able to run locally.
+Your AI should have the option to run locally.
 
-Your workspace should be yours.
+Your workspace should adapt to you.
+
+Your tools should be understandable and configurable.
 
 And the software itself should be something you can inspect, modify, rebuild, and share.
 
-Oasis is an experiment in putting those ideas together into one environment.
+IcyWhite brings these ideas together in one evolving environment.
 
 ---
 
 # 🔓 Open Source
 
-Oasis is open source.
+IcyWhite is an open-source project.
 
-You are free to take the project in your own direction.
-
-You can:
-
-**Fork it.**
-
-**Change it.**
-
-**Rename it.**
-
-**Rebuild it.**
-
-**Add to it.**
-
-**Remove things from it.**
-
-**Create something completely different from it.**
+You can fork it, change it, rename it, extend it, and build your own version according to the project's license.
 
 The purpose of open source is not simply to let people look at the code.
 
-It is to let people **use the code as a starting point for their own ideas.**
+It is to give people a starting point for their own ideas.
 
 ---
 
-## 💬 Community & Support
+# 💬 Community and Support
 
-Want to talk about **Oasis Agentic Browser**, ask questions, get help, share ideas, report problems, or just hang out with other people interested in the project?
+Have a question, found a bug, built something interesting, or want to discuss local AI and browser development?
 
-Join the **Oasis Agentic Browser** group on **Oasis Social**:
+Join the community:
 
-### 🌐 [Oasis Agentic Browser - The Oasis](https://oasis.myguyinthechair.com/s/oasis-agentic-browser/)
+### 🌐 [Oasis Agentic Browser Community on Oasis Social](https://oasis.myguyinthechair.com/s/oasis-agentic-browser/)
 
-**Oasis Social** is the community and social side of the Oasis project. It's a place for more than just technical support. You can:
+The existing Oasis Social community remains part of the project's history and community presence.
 
-* 💬 Talk about Oasis and what you're building with it
-* 🛠️ Ask for help and troubleshoot problems
-* 💡 Suggest features and share ideas
-* 🐛 Discuss bugs and issues
-* 📸 Share screenshots, projects, and experiments
-* 🤖 Talk about local AI, agents, LM Studio, and automation
-* 🌐 Discuss the future of the Oasis Agentic Browser
-* 👥 Meet and talk with other Oasis users
-* 🗣️ Or just hang out and talk
+You can use the community to:
 
-GitHub is where the code lives. **Oasis Social is where the people are.**
+- Discuss IcyWhite and related projects
+- Share ideas and experiments
+- Talk about local AI, models, and automation
+- Ask questions and troubleshoot issues
+- Share screenshots and projects
+- Suggest improvements
+- Connect with other users and developers
 
-Come join the community and help shape where Oasis goes next.
+GitHub is where the code lives. The community is where people can exchange ideas.
 
-Oasis is intended to be a community-driven project.
-
-If you build something with Oasis, you can share it.
-
-If you improve Oasis, you can contribute those improvements.
-
-If you want to take the project in a completely different direction, you can create your own fork.
-
-There is no requirement for every Oasis-based project to look or behave the same way.
-
----
-
-# 📜 License
-
-Oasis Agentic Browser is released under the **MIT License**.
-
-You are free to use, modify, fork, rename, and redistribute the project according to the terms of the MIT License.
-
-See the `LICENSE` file for the complete license text.
+For technical issues, include the relevant operating system, runtime, model, configuration, and logs whenever possible. Do not publish API keys, credentials, or private information in bug reports.
 
 ---
 
 # ♿ Accessibility
 
-Use:
+IcyWhite includes interface and keyboard-navigation-related components.
 
-```text
-Control + Shift + M
-```
+Keyboard behavior may vary between the application shell, web pages, and individual interfaces.
 
-to toggle tab-key navigation.
+For the current keyboard shortcuts and accessibility options, consult the application's implementation and settings.
 
-Alternatively:
+---
 
-```text
-Esc
-Tab
-```
+# 📜 License
 
-can be used to move to the next interactive element on the page.
+IcyWhite is distributed under the **MIT License**, provided that the repository's `LICENSE` file confirms these terms.
+
+You are free to use, modify, fork, and redistribute the project according to the applicable license.
+
+See [`LICENSE`](LICENSE) for the full license text.
 
 ---
 
 # 🌐 Project
 
-**Oasis Agentic Browser**
+**IcyWhite 2.0**
 
-An open-source Windows workspace built with Electron.
+An open-source, local-first AI browser and Windows desktop workspace.
 
-Browse.
-
-Build.
-
-Create.
-
-Experiment.
-
-Make it yours.
+**Browse. Build. Create. Experiment. Make it yours.**
